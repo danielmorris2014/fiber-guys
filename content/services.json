@@ -19,15 +19,15 @@
     "id": "splicing",
     "title": "Fiber Splicing",
     "slug": "splicing",
-    "tagline": "Clean trays, clear labeling, and documentation that's ready for closeout.",
-    "description": "Precision matters when fibers meet. Our splicing teams deliver consistently low-loss fusion splices with organized tray routing, permanent labeling, and OTDR documentation on every closure. When we hand off a splice, it's ready for the customer to inspect and the project to close out.",
+    "tagline": "Clean trays, clear labeling, and organized closures ready for handoff.",
+    "description": "Precision matters when fibers meet. Our splicing teams deliver consistently low-loss fusion splices with organized tray routing, permanent labeling, and clean enclosures on every job. When we hand off a splice, it's ready for the next crew or the end client — no callbacks.",
     "features": [
       "Core-alignment fusion splicing with sub-0.05dB average loss",
       "Ribbon and single-fiber splicing capabilities",
       "Clean tray organization with color-coded routing",
       "Permanent labeling on every closure and tray",
-      "Full OTDR testing and documentation per strand",
-      "Closeout-ready packages with test results and photos"
+      "High-count splicing up to 864 fibers",
+      "Organized enclosures ready for client inspection"
     ],
     "icon": "zap"
   }

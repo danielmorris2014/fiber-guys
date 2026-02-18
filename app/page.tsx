@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
-import { Globe, MapPin, Network, Sun, ArrowRight, Crosshair, FileText, ShieldCheck, Siren } from 'lucide-react';
+import React, { useRef, useState, useEffect } from 'react';
+import { ArrowRight, FileText, ShieldCheck, Siren } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -165,9 +165,25 @@ const FAQAccordion = ({ items }: { items: FAQItem[] }) => {
 /**
  * MAIN HOME COMPONENT
  */
+const heroSlides = [
+  { word: 'Jet.', desc: 'High-speed fiber placement. 20,000+ ft/day.', isLogo: false },
+  { word: 'Splice.', desc: 'Precision fusion. Clean trays. Sub-0.03dB average loss.', isLogo: false },
+  { word: 'Deliver.', desc: 'On schedule. On spec. Every time.', isLogo: false },
+  { word: 'Are', desc: '', isLogo: true },
+];
+
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const horizontalSectionRef = useRef<HTMLElement>(null);
+  const [wordIndex, setWordIndex] = useState(0);
+
+  useEffect(() => {
+    const duration = heroSlides[wordIndex].isLogo ? 3000 : 2000;
+    const timeout = setTimeout(() => {
+      setWordIndex((prev) => (prev + 1) % heroSlides.length);
+    }, duration);
+    return () => clearTimeout(timeout);
+  }, [wordIndex]);
 
   useGSAP(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -301,7 +317,7 @@ export default function Home() {
             loop
             playsInline
             className="w-full h-full object-cover opacity-30 scale-110"
-            ref={(el) => { if (el) el.playbackRate = 2; }}
+            ref={(el) => { if (el) el.playbackRate = 1.3; }}
           >
             <source src="/video/hero-loop.mp4" type="video/mp4" />
           </video>
@@ -309,41 +325,109 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto z-10 relative">
-          <div className="flex flex-col items-start w-full gap-0">
-            <h1 className="font-display text-[12vw] leading-[0.8] font-bold uppercase tracking-tighter text-white">
-              Production
-            </h1>
-            <div className="flex items-center gap-4 md:gap-8 w-full">
-              <h1 className="font-display text-[12vw] leading-[0.8] font-bold uppercase tracking-tighter text-transparent" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.5)' }}>
-                Over
-              </h1>
-              <div className="h-[2px] bg-blue-600 flex-grow shadow-[0_0_15px_rgba(37,99,235,0.8)]"></div>
-            </div>
-            <h1 className="font-display text-[12vw] leading-[0.8] font-bold uppercase tracking-tighter text-white text-right self-end">
-               Promises
-            </h1>
-          </div>
+          <AnimatePresence mode="wait">
+            {heroSlides[wordIndex].isLogo ? (
+              /* Logo reveal state */
+              <motion.div
+                key="logo-reveal"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                className="flex flex-col items-center justify-center py-8"
+              >
+                <span className="font-display text-[6vw] md:text-[4vw] leading-none font-bold uppercase tracking-tighter text-white/50 mb-4">
+                  We Are
+                </span>
+                <motion.img
+                  src="/brand/logo.png"
+                  alt="Fiber Guys"
+                  initial={{ scale: 0.7, opacity: 0, y: 20 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                  className="h-[20vw] md:h-[14vw] w-auto max-h-[200px]"
+                />
+              </motion.div>
+            ) : (
+              /* Normal word rotation state */
+              <motion.div
+                key="words"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {/* "We" — static, lighter weight */}
+                <span className="font-display text-[6vw] md:text-[4vw] leading-none font-bold uppercase tracking-tighter text-white/50">
+                  We
+                </span>
 
-          <div className="mt-12 flex flex-col md:flex-row justify-between items-end border-t border-white/10 pt-8">
-            <div className="font-mono text-sm md:text-base text-gray-400 max-w-md hero-fade space-y-4">
-               <div>
-                  <span className="text-blue-600">///</span> Elite fiber jetting and precision splicing. <br />
-                  We place lines. We fuse glass. We close out tickets.
-               </div>
-               
-               <button className="group flex items-center gap-3 px-0 py-2 hover:opacity-80 transition-opacity font-mono text-xs uppercase tracking-widest text-white interactable">
-                  <div className="w-8 h-8 border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors">
-                     <FileText className="w-4 h-4" />
+                {/* Rotating verb — the hero */}
+                <div className="relative h-[14vw] md:h-[12vw] overflow-hidden mt-2">
+                  <AnimatePresence mode="wait">
+                    <motion.h1
+                      key={heroSlides[wordIndex].word}
+                      initial={{ clipPath: 'inset(0 100% 0 0)' }}
+                      animate={{ clipPath: 'inset(0 0% 0 0)' }}
+                      exit={{ clipPath: 'inset(0 0 0 100%)' }}
+                      transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+                      className="font-display text-[14vw] md:text-[12vw] leading-[0.85] font-bold uppercase tracking-tighter text-white absolute inset-0"
+                    >
+                      {heroSlides[wordIndex].word}
+                    </motion.h1>
+                  </AnimatePresence>
+                </div>
+
+                {/* Blue signal line */}
+                <div className="h-[2px] bg-blue-600 w-full mt-4 shadow-[0_0_15px_rgba(37,99,235,0.8)]"></div>
+
+                {/* Rotating subtitle + step indicator */}
+                <div className="mt-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                  <div className="relative h-6 overflow-hidden">
+                    <AnimatePresence mode="wait">
+                      <motion.p
+                        key={heroSlides[wordIndex].desc}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -20, opacity: 0 }}
+                        transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+                        className="font-mono text-sm md:text-base text-gray-400 absolute"
+                      >
+                        <span className="text-blue-600">///</span> {heroSlides[wordIndex].desc}
+                      </motion.p>
+                    </AnimatePresence>
                   </div>
-                  <span className="border-b border-transparent group-hover:border-blue-600 transition-colors">Download Capabilities Deck [PDF]</span>
-               </button>
-            </div>
-            <div className="hidden md:block hero-fade">
-              <div className="animate-spin-slow">
-                <Crosshair className="w-12 h-12 text-blue-600 animate-[spin_10s_linear_infinite]" />
-              </div>
-            </div>
-          </div>
+
+                  <div className="flex items-center gap-4">
+                    <span className="font-mono text-xs text-white/40">
+                      0{wordIndex + 1} <span className="text-white/20">/</span> 03
+                    </span>
+                    <div className="flex gap-2">
+                      {[0, 1, 2].map((i) => (
+                        <div
+                          key={i}
+                          className={`h-[2px] w-6 transition-all duration-500 ${i === wordIndex ? 'bg-blue-600 w-8' : 'bg-white/20'}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* CTA row */}
+                <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                  <p className="font-mono text-sm text-gray-500 max-w-sm">
+                    Production-grade fiber construction. Jetting and splicing crews for telecom contractors nationwide.
+                  </p>
+                  <button className="group flex items-center gap-3 px-0 py-2 hover:opacity-80 transition-opacity font-mono text-xs uppercase tracking-widest text-white interactable">
+                    <div className="w-8 h-8 border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors">
+                      <FileText className="w-4 h-4" />
+                    </div>
+                    <span className="border-b border-transparent group-hover:border-blue-600 transition-colors">Download Capabilities Deck [PDF]</span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 mix-blend-difference hero-fade">
@@ -378,40 +462,22 @@ export default function Home() {
 
         {/* Marquee */}
         <section className="pt-16 pb-12 border-b border-white/10 overflow-hidden relative z-10 bg-[#050505]">
-          <div className="container mx-auto px-6 mb-8">
+          <div className="container mx-auto px-6 mb-8 relative z-30">
             <span className="font-mono text-sm uppercase tracking-[0.2em] text-gray-500">
               Relied on by top telecom contractors
             </span>
           </div>
           <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-transparent to-[#050505] z-20 pointer-events-none"></div>
-          <div className="flex animate-marquee whitespace-nowrap">
+          <div className="marquee-track relative z-10">
             {[1, 2].map((iter) => (
-              <div key={iter} className="flex gap-16 md:gap-32 items-center mx-8">
-                 <div className="flex items-center gap-4 opacity-40 hover:opacity-100 transition-opacity duration-300 group cursor-default">
-                    <Globe className="w-8 h-8 text-white" />
-                    <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase">AT&T Broadband</span>
-                 </div>
-                 <div className="flex items-center gap-4 opacity-40 hover:opacity-100 transition-opacity duration-300 group cursor-default">
-                    <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase">Fastwyre</span>
-                 </div>
-                 <div className="flex items-center gap-4 opacity-40 hover:opacity-100 transition-opacity duration-300 group cursor-default">
-                    <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase">Comcast</span>
-                 </div>
-                 <div className="flex items-center gap-4 opacity-40 hover:opacity-100 transition-opacity duration-300 group cursor-default">
-                    <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase">Meta</span>
-                 </div>
-                 <div className="flex items-center gap-4 opacity-40 hover:opacity-100 transition-opacity duration-300 group cursor-default">
-                    <MapPin className="w-8 h-8 text-white" />
-                    <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase">Open County</span>
-                 </div>
-                 <div className="flex items-center gap-4 opacity-40 hover:opacity-100 transition-opacity duration-300 group cursor-default">
-                    <Network className="w-8 h-8 text-white" />
-                    <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase">CAT5</span>
-                 </div>
-                 <div className="flex items-center gap-4 opacity-40 hover:opacity-100 transition-opacity duration-300 group cursor-default">
-                    <Sun className="w-8 h-8 text-white" />
-                    <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase">Sunrise Telecom</span>
-                 </div>
+              <div key={iter} className="marquee-content">
+                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">AT&T Broadband</span>
+                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">Fastwyre</span>
+                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">Comcast</span>
+                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">Meta</span>
+                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">Open Country</span>
+                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">CAT5</span>
+                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">Sunrise Telecom</span>
               </div>
             ))}
           </div>
@@ -445,9 +511,9 @@ export default function Home() {
                     <div className="font-mono text-blue-600 text-sm">[02]</div>
                     <div>
                         <h2 className="font-display text-6xl md:text-8xl font-bold uppercase mb-6 leading-none">Precision<br/>Splicing</h2>
-                        <p className="font-sans text-gray-300 max-w-sm mb-8 text-lg">Test-verified, closeout-ready documentation. Organized splice trays, labeled closures. Sub-0.03dB loss average.</p>
+                        <p className="font-sans text-gray-300 max-w-sm mb-8 text-lg">Organized splice trays, labeled closures, and clean handoffs. Sub-0.03dB loss average.</p>
                         <ul className="font-mono text-sm text-gray-400 space-y-2">
-                             {['Mass Fusion (Ribbon) & Single', 'Bidirectional OTDR & OLTS', 'Native .SOR & PDF Closeouts'].map(item => (
+                             {['Mass Fusion (Ribbon) & Single', 'High-Count & Micro Fiber', 'Organized Trays & Labeled Closures'].map(item => (
                                 <li key={item} className="flex items-center"><span className="w-2 h-2 bg-blue-600 mr-2"></span>{item}</li>
                             ))}
                         </ul>
@@ -468,8 +534,8 @@ export default function Home() {
                         { step: '01', title: 'Scope & Verify', desc: 'We analyze prints and walk the route. We verify conduit continuity and identify choke points before mobilization.' },
                         { step: '02', title: 'Mobilize', desc: 'Heavy equipment and experienced crews deployed to site. Compressor pressures calibrated to conduit specs.' },
                         { step: '03', title: 'Execute', desc: 'High-speed jetting and precision fusion splicing. We manage Figure-8ing for long hauls to protect minimum bend radius.' },
-                        { step: '04', title: 'Certify', desc: 'Tier 1 and Tier 2 testing. We validate loss budgets with Power Meters and characterize events with OTDRs.' },
-                        { step: '05', title: 'Closeout', desc: 'Clean, organized documentation delivered immediately. .SOR files, geo-tagged photos, and light levels.' }
+                        { step: '04', title: 'Verify', desc: 'Quality checks on every splice and placement. We confirm continuity, organize trays, and label every closure before handoff.' },
+                        { step: '05', title: 'Deliver', desc: 'Clean handoff. Organized enclosures, labeled strands, and a crew that leaves the site better than they found it.' }
                     ].map((p, i) => (
                         <div key={i} className="w-screen flex-shrink-0 px-12 flex flex-col justify-center h-full border-r border-white/20 last:border-r-0 text-white">
                             <span className="font-display text-[20vh] md:text-[30vh] opacity-20 font-bold mb-4 text-black leading-none">{p.step}</span>
@@ -500,7 +566,7 @@ export default function Home() {
                     </div>
                     <div className="w-full md:w-1/3">
                         <h3 className="font-display text-4xl font-bold mb-4 uppercase">Metro Ring <br/>Jetting</h3>
-                        <p className="font-sans text-gray-400 mb-6">35,000ft urban conduit placement. Zero downtime. Mandrel proofed and pressure tested prior to placement.</p>
+                        <p className="font-sans text-gray-400 mb-6">35,000ft urban conduit placement. Zero downtime. Mandrel proofed and pressure verified prior to placement.</p>
                         <div className="h-[1px] w-full bg-white/20 mb-4"></div>
                         <ul className="font-mono text-xs text-gray-500 flex gap-4">
                             <li>288ct Micro-Jetting</li>
@@ -518,7 +584,7 @@ export default function Home() {
                     </div>
                     <div className="w-full md:w-1/3 text-right">
                         <h3 className="font-display text-4xl font-bold mb-4 uppercase">Headend <br/>Termination</h3>
-                        <p className="font-sans text-gray-400 mb-6">High-density fusion splicing. 1440 terminations. Bidirectional testing confirms 0.02dB avg loss.</p>
+                        <p className="font-sans text-gray-400 mb-6">High-density fusion splicing. 1440 terminations. Clean trays, labeled closures, 0.02dB avg loss.</p>
                         <div className="h-[1px] w-full bg-white/20 mb-4"></div>
                         <ul className="font-mono text-xs text-gray-500 flex gap-4 justify-end">
                             <li>Data Center</li>
@@ -691,15 +757,22 @@ export default function Home() {
             0% { transform: translateY(-100%); }
             100% { transform: translateY(100%); }
           }
-          @keyframes spin-slow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+          .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: marquee 25s linear infinite;
           }
-          .animate-spin-slow {
-            animation: spin-slow 10s linear infinite;
+          .marquee-content {
+            display: flex;
+            gap: 3rem;
+            padding-right: 3rem;
+            flex-shrink: 0;
           }
-          .animate-marquee {
-            animation: marquee 30s linear infinite;
+          @media (min-width: 768px) {
+            .marquee-content {
+              gap: 5rem;
+              padding-right: 5rem;
+            }
           }
           @keyframes marquee {
             0% { transform: translateX(0); }

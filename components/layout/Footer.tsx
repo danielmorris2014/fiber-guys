@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Linkedin, Instagram, Mail, Phone, MapPin } from "lucide-react";
 
 const footerLinks = [
@@ -17,9 +18,13 @@ export function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="interactable inline-block">
-              <span className="font-heading text-xl font-bold tracking-tight text-text">
-                FIBER GUYS
-              </span>
+              <Image
+                src="/brand/logo.png"
+                alt="Fiber Guys"
+                width={140}
+                height={50}
+                className="h-10 w-auto"
+              />
             </Link>
             <p className="text-muted text-sm mt-2 max-w-xs">
               Production-focused fiber placement and precision splicing.

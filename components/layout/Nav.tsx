@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Squeeze } from "hamburger-react";
 import { cn } from "@/lib/utils";
 
@@ -55,13 +56,15 @@ export function Nav() {
     >
       <nav className="mx-auto max-w-7xl px-6 lg:px-8 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="interactable relative z-50 group">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-orange rounded-full group-hover:shadow-[0_0_12px_rgba(37,99,235,0.6)] transition-shadow duration-300" />
-            <span className="font-heading text-lg font-bold tracking-tight text-white">
-              FIBER GUYS
-            </span>
-          </div>
+        <Link href="/" className="interactable relative z-50">
+          <Image
+            src="/brand/logo.png"
+            alt="Fiber Guys"
+            width={140}
+            height={50}
+            className="h-10 w-auto"
+            priority
+          />
         </Link>
 
         {/* Desktop nav */}

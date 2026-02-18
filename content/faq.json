@@ -2,12 +2,12 @@
   {
     "id": "faq1",
     "question": "What's your daily jetting output?",
-    "answer": "Typical daily production ranges from 15,000 to 25,000 feet depending on conduit diameter, route complexity, and cable count. Our rigs are calibrated for both microduct and standard 1.25\" HDPE. We mandrel-proof and pressure-test every segment before placement begins."
+    "answer": "Typical daily production ranges from 15,000 to 25,000 feet depending on conduit diameter, route complexity, and cable count. Our rigs are calibrated for both microduct and standard 1.25\" HDPE. We mandrel-proof and pressure-verify every segment before placement begins."
   },
   {
     "id": "faq2",
-    "question": "What closeout documentation do you provide?",
-    "answer": "Every project ships with bidirectional OTDR traces (.SOR files), optical power meter readings, geo-tagged splice photos, organized tray maps, and a full closeout package in PDF format. Documentation is delivered within 24 hours of project completion — usually same day."
+    "question": "What does a clean handoff look like?",
+    "answer": "Every enclosure is organized with clean tray routing, labeled strands, and sealed closures. We leave the site ready for the next crew or the end client — no loose ends, no callbacks. Geo-tagged photos of every splice point are available on request."
   },
   {
     "id": "faq3",
