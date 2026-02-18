@@ -39,4 +39,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-public/video/hero-loop.mp4
+public/video/hero-loop-original.mp4
