@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Linkedin, Instagram, Mail, Phone, MapPin } from "lucide-react";
+import { Mail } from "lucide-react";
 
 const footerLinks = [
   { href: "/services", label: "Services" },
@@ -63,43 +63,15 @@ export function Footer() {
                 <Mail className="w-4 h-4" />
                 info@fiberguys.com
               </a>
-              <a
-                href="tel:+15551234567"
-                className="interactable flex items-center gap-2 text-sm text-muted hover:text-orange transition-colors"
-              >
-                <Phone className="w-4 h-4" />
-                (555) 123-4567
-              </a>
-              <div className="flex items-center gap-2 text-sm text-muted">
-                <MapPin className="w-4 h-4" />
-                Denver, CO 80202
-              </div>
+              <p className="text-sm text-muted/60">
+                Crews available for deployment nationwide
+              </p>
             </div>
           </div>
         </div>
 
         {/* Bottom strip */}
         <div className="mt-12 pt-8 border-t border-line flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-4">
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="interactable text-muted hover:text-orange transition-colors"
-              aria-label="LinkedIn"
-            >
-              <Linkedin className="w-5 h-5" />
-            </a>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="interactable text-muted hover:text-orange transition-colors"
-              aria-label="Instagram"
-            >
-              <Instagram className="w-5 h-5" />
-            </a>
-          </div>
           <p className="text-xs text-muted/50">
             &copy; {new Date().getFullYear()} Fiber Guys. All rights reserved.
           </p>

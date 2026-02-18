@@ -4,7 +4,8 @@ import { TooltipProvider } from "@/components/ui/Tooltip";
 import servicesData from "@/content/services.json";
 import type { ServiceData } from "@/lib/types";
 import type { Metadata } from "next";
-import { Cable, Zap } from "lucide-react";
+import { Cable, Zap, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -68,6 +69,12 @@ export default function ServicesPage() {
                   <p className="mt-6 text-muted leading-relaxed">
                     {service.description}
                   </p>
+                  <Link
+                    href={`/services/${service.slug}`}
+                    className="inline-flex items-center gap-2 mt-6 text-orange hover:text-orange-hard transition-colors font-mono text-xs uppercase tracking-widest interactable"
+                  >
+                    View Full Details <ArrowRight className="w-3 h-3" />
+                  </Link>
                 </ScrollReveal>
 
                 <ScrollReveal delay={0.15}>

@@ -1,66 +1,63 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { ArrowRight, FileText, ShieldCheck, Siren } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { motion, AnimatePresence } from 'motion/react';
-import testimonials from '@/content/testimonials.json';
 import faqData from '@/content/faq.json';
-import type { Testimonial, FAQItem } from '@/lib/types';
+import type { FAQItem } from '@/lib/types';
+import Link from 'next/link';
+import { USCoverageMap } from '@/components/ui/USCoverageMap';
 
 /**
  * INTERNAL COMPONENTS
  */
 
 // Magnetic Button Component
-const MagneticButton = ({ children, className, onClick }: { children: React.ReactNode, className?: string, onClick?: () => void }) => {
-  const btnRef = useRef<HTMLButtonElement>(null);
+const MagneticButton = ({ children, className, onClick, href }: { children: React.ReactNode, className?: string, onClick?: () => void, href?: string }) => {
+  const btnRef = useRef<HTMLButtonElement | null>(null);
+  const linkRef = useRef<HTMLAnchorElement | null>(null);
 
   useGSAP(() => {
-    const btn = btnRef.current;
-    if (!btn) return;
+    const el = btnRef.current || linkRef.current;
+    if (!el) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = btn.getBoundingClientRect();
-      const x = e.clientX - (rect.left + rect.width / 2);
-      const y = e.clientY - (rect.top + rect.height / 2);
+    const handleMouseMove = (e: Event) => {
+      const me = e as globalThis.MouseEvent;
+      const rect = el.getBoundingClientRect();
+      const x = me.clientX - (rect.left + rect.width / 2);
+      const y = me.clientY - (rect.top + rect.height / 2);
 
-      gsap.to(btn, {
+      gsap.to(el, {
         x: x * 0.3,
         y: y * 0.3,
         duration: 0.5,
         ease: "power3.out"
       });
-      
-      const btnChildren = btn.children;
-      if (btnChildren) {
-        gsap.to(btnChildren, {
-          x: x * 0.1,
-          y: y * 0.1,
-          duration: 0.5,
-          ease: "power3.out"
-        });
-      }
     };
 
     const handleMouseLeave = () => {
-      gsap.to(btn, { x: 0, y: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
-      const btnChildren = btn.children;
-      if (btnChildren) {
-        gsap.to(btnChildren, { x: 0, y: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
-      }
+      gsap.to(el, { x: 0, y: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
     };
 
-    btn.addEventListener('mousemove', handleMouseMove);
-    btn.addEventListener('mouseleave', handleMouseLeave);
+    el.addEventListener('mousemove', handleMouseMove);
+    el.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
-      btn.removeEventListener('mousemove', handleMouseMove);
-      btn.removeEventListener('mouseleave', handleMouseLeave);
+      el.removeEventListener('mousemove', handleMouseMove);
+      el.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, { scope: btnRef });
+
+  if (href) {
+    return (
+      <Link ref={linkRef} href={href} className={`interactable ${className}`}>
+        {children}
+      </Link>
+    );
+  }
 
   return (
     <button ref={btnRef} className={`interactable ${className}`} onClick={onClick}>
@@ -83,36 +80,12 @@ const SpotlightCard = ({ children, className }: { children: React.ReactNode, cla
   };
 
   return (
-    <div 
-      ref={cardRef} 
+    <div
+      ref={cardRef}
       onMouseMove={handleMouseMove}
       className={`relative overflow-hidden spotlight-card interactable ${className}`}
     >
       {children}
-      <style dangerouslySetInnerHTML={{__html: `
-        .spotlight-card::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
-          z-index: 1;
-          opacity: 0;
-          transition: opacity 0.5s;
-          pointer-events: none;
-        }
-        .spotlight-card:hover::before { opacity: 1; }
-        .spotlight-card::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(37, 99, 235, 0.1), transparent 40%);
-          z-index: 1;
-          opacity: 0;
-          transition: opacity 0.5s;
-          pointer-events: none;
-        }
-        .spotlight-card:hover::after { opacity: 1; }
-      `}} />
     </div>
   );
 };
@@ -165,56 +138,66 @@ const FAQAccordion = ({ items }: { items: FAQItem[] }) => {
 /**
  * MAIN HOME COMPONENT
  */
-const heroSlides = [
-  { word: 'Jet.', desc: 'High-speed fiber placement. 20,000+ ft/day.', isLogo: false },
-  { word: 'Splice.', desc: 'Precision fusion. Clean trays. Sub-0.03dB average loss.', isLogo: false },
-  { word: 'Deliver.', desc: 'On schedule. On spec. Every time.', isLogo: false },
-  { word: 'Are', desc: '', isLogo: true },
+const heroWords = [
+  { word: 'Jet.', desc: 'Air-blown fiber placement through conduit systems.' },
+  { word: 'Splice.', desc: 'Precision fusion splicing with organized closeout.' },
+  { word: 'Deliver.', desc: 'On schedule. On spec. Ready for handoff.' },
 ];
+
+interface SiteContent {
+  coverage?: { description?: string };
+  hero?: { subtitle?: string };
+  cta?: { heading1?: string; heading2?: string; description?: string };
+}
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const horizontalSectionRef = useRef<HTMLElement>(null);
-  const [wordIndex, setWordIndex] = useState(0);
+  const [phase, setPhase] = useState(0);
+  const [siteContent, setSiteContent] = useState<SiteContent | null>(null);
 
   useEffect(() => {
-    const duration = heroSlides[wordIndex].isLogo ? 3000 : 2000;
+    fetch("/api/content/site")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => { if (data) setSiteContent(data); })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const durations = [1500, 1500, 2000, 3000];
     const timeout = setTimeout(() => {
-      setWordIndex((prev) => (prev + 1) % heroSlides.length);
-    }, duration);
+      setPhase((prev) => (prev + 1) % 4);
+    }, durations[phase]);
     return () => clearTimeout(timeout);
-  }, [wordIndex]);
+  }, [phase]);
 
   useGSAP(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Fade in intro
-    gsap.from(".hero-fade", { 
-      y: 20, 
-      opacity: 0, 
-      stagger: 0.1, 
-      duration: 1, 
+    gsap.from(".hero-fade", {
+      y: 20,
+      opacity: 0,
+      stagger: 0.1,
+      duration: 1,
       ease: "power2.out",
       delay: 0.5
     });
 
-    // Hero Parallax
     gsap.to("#hero-bg", {
-      scrollTrigger: { 
-        trigger: "#hero", 
-        start: "top top", 
-        end: "bottom top", 
-        scrub: true 
+      scrollTrigger: {
+        trigger: "#hero",
+        start: "top top",
+        end: "bottom top",
+        scrub: true
       },
-      y: 100, 
-      scale: 1.1, 
+      y: 100,
+      scale: 1.1,
       opacity: 0.2
     });
 
-    // Horizontal Scroll (The Protocol) — uses CSS sticky, NO GSAP pin
     if (horizontalSectionRef.current) {
       gsap.to(".process-track", {
-        x: () => -(4 * window.innerWidth), // 5 panels, move 4 screens left
+        x: () => -(4 * window.innerWidth),
         ease: "none",
         scrollTrigger: {
           trigger: horizontalSectionRef.current,
@@ -226,35 +209,6 @@ export default function Home() {
       });
     }
 
-    // Gallery Parallax
-    gsap.utils.toArray('.hover-scale').forEach((img: any) => {
-      gsap.to(img, {
-        scale: 1.2,
-        scrollTrigger: { 
-          trigger: img.parentElement, 
-          start: "top bottom", 
-          end: "bottom top", 
-          scrub: true 
-        }
-      });
-    });
-
-    // Testimonials Stagger
-    ScrollTrigger.batch(".testimonial-card", {
-      onEnter: batch => {
-        gsap.from(batch, {
-          y: 40,
-          opacity: 0,
-          stagger: 0.15,
-          duration: 0.8,
-          ease: "power3.out"
-        });
-      },
-      start: "top 85%",
-      once: true
-    });
-
-    // FAQ Section Fade In
     gsap.from(".faq-section", {
       scrollTrigger: {
         trigger: ".faq-section",
@@ -267,39 +221,15 @@ export default function Home() {
       ease: "power3.out"
     });
 
-    // Footer Reveal
     gsap.from("#contact-card", {
-      scrollTrigger: { 
-        trigger: "#contact", 
-        start: "top 70%" 
+      scrollTrigger: {
+        trigger: "#contact",
+        start: "top 70%"
       },
-      y: 50, 
-      opacity: 0, 
-      duration: 1, 
+      y: 50,
+      opacity: 0,
+      duration: 1,
       ease: "power3.out"
-    });
-
-    // Scramble Numbers on Scroll
-    ScrollTrigger.batch(".scramble-number", {
-      onEnter: batch => {
-        batch.forEach((el) => {
-          const targetStr = el.getAttribute('data-target');
-          if (!targetStr) return;
-          const target = parseFloat(targetStr);
-          const suffix = (el as HTMLElement).innerText.replace(/[0-9.]/g, '');
-          let obj = { val: 0 };
-          gsap.to(obj, {
-            val: target,
-            duration: 2,
-            ease: "power4.out",
-            onUpdate: function() {
-              const formattedVal = targetStr.includes('.') ? obj.val.toFixed(2) : Math.floor(obj.val);
-              el.innerHTML = formattedVal + `<span class="text-3xl align-top text-blue-600">${suffix}</span>`;
-            }
-          });
-        });
-      },
-      start: "top 85%"
     });
 
   }, { scope: containerRef });
@@ -326,8 +256,80 @@ export default function Home() {
 
         <div className="container mx-auto z-10 relative">
           <AnimatePresence mode="wait">
-            {heroSlides[wordIndex].isLogo ? (
-              /* Logo reveal state */
+            {phase < 3 ? (
+              <motion.div
+                key="words-stack"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <span className="font-display text-[6vw] md:text-[4vw] leading-none font-bold uppercase tracking-tighter text-white/50">
+                  We
+                </span>
+
+                <div className="flex flex-col mt-2">
+                  {heroWords.map((item, i) => (
+                    i <= phase && (
+                      <motion.span
+                        key={item.word}
+                        initial={{ clipPath: 'inset(0 100% 0 0)', opacity: 0 }}
+                        animate={{ clipPath: 'inset(0 0% 0 0)', opacity: 1 }}
+                        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+                        className={`font-display text-[12vw] md:text-[8vw] leading-[0.9] font-bold uppercase tracking-tighter transition-colors duration-500 ${i === phase ? 'text-white' : 'text-white/30'}`}
+                      >
+                        {item.word}
+                      </motion.span>
+                    )
+                  ))}
+                </div>
+
+                <div className="h-[2px] bg-blue-600 w-full mt-4 shadow-[0_0_15px_rgba(37,99,235,0.8)]"></div>
+
+                <div className="mt-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                  <div className="relative h-6 overflow-hidden">
+                    <AnimatePresence mode="wait">
+                      <motion.p
+                        key={heroWords[phase].desc}
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -20, opacity: 0 }}
+                        transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+                        className="font-mono text-sm md:text-base text-gray-400 absolute"
+                      >
+                        <span className="text-blue-600">///</span> {heroWords[phase].desc}
+                      </motion.p>
+                    </AnimatePresence>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <span className="font-mono text-xs text-white/40">
+                      0{phase + 1} <span className="text-white/20">/</span> 03
+                    </span>
+                    <div className="flex gap-2">
+                      {[0, 1, 2].map((i) => (
+                        <div
+                          key={i}
+                          className={`h-[2px] transition-all duration-500 ${i <= phase ? 'bg-blue-600 w-8' : 'bg-white/20 w-6'}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                  <p className="font-mono text-sm text-gray-500 max-w-sm">
+                    {siteContent?.hero?.subtitle || "Production-grade fiber construction. Jetting and splicing crews for telecom contractors nationwide."}
+                  </p>
+                  <Link href="/request" className="group flex items-center gap-3 px-0 py-2 hover:opacity-80 transition-opacity font-mono text-xs uppercase tracking-widest text-white interactable">
+                    <div className="w-8 h-8 border border-white/20 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-600 transition-colors">
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
+                    <span className="border-b border-transparent group-hover:border-blue-600 transition-colors">Request a Crew</span>
+                  </Link>
+                </div>
+              </motion.div>
+            ) : (
               <motion.div
                 key="logo-reveal"
                 initial={{ opacity: 0 }}
@@ -348,84 +350,6 @@ export default function Home() {
                   className="h-[20vw] md:h-[14vw] w-auto max-h-[200px]"
                 />
               </motion.div>
-            ) : (
-              /* Normal word rotation state */
-              <motion.div
-                key="words"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {/* "We" — static, lighter weight */}
-                <span className="font-display text-[6vw] md:text-[4vw] leading-none font-bold uppercase tracking-tighter text-white/50">
-                  We
-                </span>
-
-                {/* Rotating verb — the hero */}
-                <div className="relative h-[14vw] md:h-[12vw] overflow-hidden mt-2">
-                  <AnimatePresence mode="wait">
-                    <motion.h1
-                      key={heroSlides[wordIndex].word}
-                      initial={{ clipPath: 'inset(0 100% 0 0)' }}
-                      animate={{ clipPath: 'inset(0 0% 0 0)' }}
-                      exit={{ clipPath: 'inset(0 0 0 100%)' }}
-                      transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-                      className="font-display text-[14vw] md:text-[12vw] leading-[0.85] font-bold uppercase tracking-tighter text-white absolute inset-0"
-                    >
-                      {heroSlides[wordIndex].word}
-                    </motion.h1>
-                  </AnimatePresence>
-                </div>
-
-                {/* Blue signal line */}
-                <div className="h-[2px] bg-blue-600 w-full mt-4 shadow-[0_0_15px_rgba(37,99,235,0.8)]"></div>
-
-                {/* Rotating subtitle + step indicator */}
-                <div className="mt-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-                  <div className="relative h-6 overflow-hidden">
-                    <AnimatePresence mode="wait">
-                      <motion.p
-                        key={heroSlides[wordIndex].desc}
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: -20, opacity: 0 }}
-                        transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-                        className="font-mono text-sm md:text-base text-gray-400 absolute"
-                      >
-                        <span className="text-blue-600">///</span> {heroSlides[wordIndex].desc}
-                      </motion.p>
-                    </AnimatePresence>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <span className="font-mono text-xs text-white/40">
-                      0{wordIndex + 1} <span className="text-white/20">/</span> 03
-                    </span>
-                    <div className="flex gap-2">
-                      {[0, 1, 2].map((i) => (
-                        <div
-                          key={i}
-                          className={`h-[2px] w-6 transition-all duration-500 ${i === wordIndex ? 'bg-blue-600 w-8' : 'bg-white/20'}`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* CTA row */}
-                <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-                  <p className="font-mono text-sm text-gray-500 max-w-sm">
-                    Production-grade fiber construction. Jetting and splicing crews for telecom contractors nationwide.
-                  </p>
-                  <button className="group flex items-center gap-3 px-0 py-2 hover:opacity-80 transition-opacity font-mono text-xs uppercase tracking-widest text-white interactable">
-                    <div className="w-8 h-8 border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors">
-                      <FileText className="w-4 h-4" />
-                    </div>
-                    <span className="border-b border-transparent group-hover:border-blue-600 transition-colors">Download Capabilities Deck [PDF]</span>
-                  </button>
-                </div>
-              </motion.div>
             )}
           </AnimatePresence>
         </div>
@@ -439,20 +363,20 @@ export default function Home() {
       </header>
 
       <main>
-        {/* Statistics */}
+        {/* Capabilities Strip — verifiable specs, not aggregate claims */}
         <section className="py-24 border-b border-white/10 bg-[#050505] relative z-10">
           <div className="container mx-auto px-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
               {[
-                { val: 15, suffix: '+', label: 'Million Feet Placed' },
-                { val: 10, suffix: 'K+', label: 'Splices Completed' },
-                { val: 99, suffix: '%', label: 'First-Pass Rate' },
-                { val: 0.03, suffix: 'dB', label: 'Avg. Splice Loss', isFloat: true }
+                { label: 'Fiber Counts', value: '12–864', unit: 'ct' },
+                { label: 'Daily Output', value: 'Up to 25K', unit: 'ft/day' },
+                { label: 'Splice Target', value: '<0.05', unit: 'dB avg' },
+                { label: 'Mobilization', value: '5–10', unit: 'days' },
               ].map((stat, i) => (
                 <SpotlightCard key={i} className="border-l border-white/20 pl-6 group p-4 rounded-sm">
-                  <h3 className={`font-display text-5xl md:text-7xl font-bold text-white mb-2 group-hover:text-blue-600 transition-colors duration-300 scramble-number`} data-target={stat.val}>
-                    0<span className="text-3xl align-top text-blue-600">{stat.suffix}</span>
-                  </h3>
+                  <p className="font-display text-3xl md:text-5xl font-bold text-white mb-1 group-hover:text-blue-600 transition-colors duration-300">
+                    {stat.value}<span className="text-lg md:text-xl text-blue-600 ml-1">{stat.unit}</span>
+                  </p>
                   <p className="font-mono text-xs uppercase tracking-widest text-gray-500">{stat.label}</p>
                 </SpotlightCard>
               ))}
@@ -460,86 +384,65 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Marquee */}
-        <section className="pt-16 pb-12 border-b border-white/10 overflow-hidden relative z-10 bg-[#050505]">
-          <div className="container mx-auto px-6 mb-8 relative z-30">
-            <span className="font-mono text-sm uppercase tracking-[0.2em] text-gray-500">
-              Relied on by top telecom contractors
-            </span>
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-transparent to-[#050505] z-20 pointer-events-none"></div>
-          <div className="marquee-track relative z-10">
-            {[1, 2].map((iter) => (
-              <div key={iter} className="marquee-content">
-                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">AT&T Broadband</span>
-                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">Fastwyre</span>
-                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">Comcast</span>
-                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">Meta</span>
-                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">Open Country</span>
-                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">CAT5</span>
-                 <span className="font-display font-bold text-3xl md:text-4xl text-white uppercase opacity-40">Sunrise Telecom</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Services */}
+        {/* Services Split — with gradient placeholders instead of stock photos */}
         <section id="services" className="min-h-screen relative flex flex-col md:flex-row border-b border-white/10 overflow-hidden">
             <SpotlightCard className="w-full md:w-1/2 min-h-[50vh] md:min-h-screen border-b md:border-b-0 md:border-r border-white/10 relative group">
-                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 scale-100 group-hover:scale-110 opacity-40 group-hover:opacity-60" 
-                     style={{ backgroundImage: "url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2670&auto=format&fit=crop')" }}></div>
-                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors duration-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-[#050505] to-[#0a0a0a] transition-all duration-700 group-hover:from-blue-600/30"></div>
                 <div className="relative z-10 p-12 h-full flex flex-col justify-between">
                     <div className="font-mono text-blue-600 text-sm">[01]</div>
                     <div>
                         <h2 className="font-display text-6xl md:text-8xl font-bold uppercase mb-6 leading-none">Fiber<br/>Jetting</h2>
-                        <p className="font-sans text-gray-300 max-w-sm mb-8 text-lg">High-speed air placement. We own the rigs. We hit the deadlines. 20,000+ feet daily output capability.</p>
+                        <p className="font-sans text-gray-300 max-w-sm mb-8 text-lg">Air-blown fiber placement through conduit systems. Production-scale output with real-time tension monitoring.</p>
                         <ul className="font-mono text-sm text-gray-400 space-y-2">
-                            {['Mandrel & PSI Proofing', 'Metro, Long-Haul & Microduct', 'Crash-Test Verified Setup'].map(item => (
+                            {['Mandrel & Pressure Verification', 'Metro, Long-Haul & Microduct', '12–864 Fiber Count Range'].map(item => (
                                 <li key={item} className="flex items-center"><span className="w-2 h-2 bg-blue-600 mr-2"></span>{item}</li>
                             ))}
                         </ul>
+                        <Link href="/services#jetting" className="inline-flex items-center gap-2 mt-8 font-mono text-xs uppercase tracking-widest text-blue-600 hover:text-white transition-colors interactable">
+                          Learn More <ArrowRight className="w-3 h-3" />
+                        </Link>
                     </div>
                 </div>
             </SpotlightCard>
 
             <SpotlightCard className="w-full md:w-1/2 min-h-[50vh] md:min-h-screen relative group">
-                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 scale-100 group-hover:scale-110 opacity-40 group-hover:opacity-60" 
-                     style={{ backgroundImage: "url('https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?q=80&w=2670&auto=format&fit=crop')" }}></div>
-                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors duration-500"></div>
+                <div className="absolute inset-0 bg-gradient-to-bl from-blue-600/20 via-[#050505] to-[#0a0a0a] transition-all duration-700 group-hover:from-blue-600/30"></div>
                 <div className="relative z-10 p-12 h-full flex flex-col justify-between">
                     <div className="font-mono text-blue-600 text-sm">[02]</div>
                     <div>
                         <h2 className="font-display text-6xl md:text-8xl font-bold uppercase mb-6 leading-none">Precision<br/>Splicing</h2>
-                        <p className="font-sans text-gray-300 max-w-sm mb-8 text-lg">Organized splice trays, labeled closures, and clean handoffs. Sub-0.03dB loss average.</p>
+                        <p className="font-sans text-gray-300 max-w-sm mb-8 text-lg">Core-alignment fusion splicing. Organized trays, labeled closures, and documentation ready for handoff.</p>
                         <ul className="font-mono text-sm text-gray-400 space-y-2">
-                             {['Mass Fusion (Ribbon) & Single', 'High-Count & Micro Fiber', 'Organized Trays & Labeled Closures'].map(item => (
+                             {['Mass Fusion (Ribbon) & Single', 'Sub-0.05dB Average Loss Target', 'Organized Trays & Labeled Closures'].map(item => (
                                 <li key={item} className="flex items-center"><span className="w-2 h-2 bg-blue-600 mr-2"></span>{item}</li>
                             ))}
                         </ul>
+                        <Link href="/services#splicing" className="inline-flex items-center gap-2 mt-8 font-mono text-xs uppercase tracking-widest text-blue-600 hover:text-white transition-colors interactable">
+                          Learn More <ArrowRight className="w-3 h-3" />
+                        </Link>
                     </div>
                 </div>
             </SpotlightCard>
         </section>
 
-        {/* Process (Horizontal Scroll) — CSS sticky + GSAP scrub, no pin */}
+        {/* Process (Horizontal Scroll) */}
         <section id="process" ref={horizontalSectionRef} className="relative bg-blue-600" style={{ height: '300vh' }}>
             <div className="sticky top-0 h-screen w-full overflow-hidden">
                 <div className="absolute top-12 left-12 z-20">
-                    <h3 className="font-display text-4xl uppercase font-bold text-white">The Protocol</h3>
+                    <h2 className="font-display text-4xl uppercase font-bold text-white">The Protocol</h2>
                     <p className="font-mono text-sm mt-2 opacity-80 text-white">Methodology // Execution</p>
                 </div>
                 <div className="process-track flex flex-row flex-nowrap h-full items-center" style={{ width: '500vw' }}>
                     {[
-                        { step: '01', title: 'Scope & Verify', desc: 'We analyze prints and walk the route. We verify conduit continuity and identify choke points before mobilization.' },
-                        { step: '02', title: 'Mobilize', desc: 'Heavy equipment and experienced crews deployed to site. Compressor pressures calibrated to conduit specs.' },
-                        { step: '03', title: 'Execute', desc: 'High-speed jetting and precision fusion splicing. We manage Figure-8ing for long hauls to protect minimum bend radius.' },
-                        { step: '04', title: 'Verify', desc: 'Quality checks on every splice and placement. We confirm continuity, organize trays, and label every closure before handoff.' },
-                        { step: '05', title: 'Deliver', desc: 'Clean handoff. Organized enclosures, labeled strands, and a crew that leaves the site better than they found it.' }
+                        { step: '01', title: 'Scope & Verify', desc: 'We review prints and walk the route. Conduit continuity is verified and choke points are identified before mobilization.' },
+                        { step: '02', title: 'Mobilize', desc: 'Equipment and experienced crews deployed to site. Compressor pressures calibrated to conduit specifications.' },
+                        { step: '03', title: 'Execute', desc: 'Production fiber placement or precision fusion splicing. Tension monitoring, bend radius compliance, and real-time quality checks.' },
+                        { step: '04', title: 'Document', desc: 'OTDR testing, splice loss verification, tray photography, and labeled enclosures. Every strand accounted for.' },
+                        { step: '05', title: 'Handoff', desc: 'Clean site, organized closures, and a documentation package ready for client review or closeout submission.' }
                     ].map((p, i) => (
                         <div key={i} className="w-screen flex-shrink-0 px-12 flex flex-col justify-center h-full border-r border-white/20 last:border-r-0 text-white">
                             <span className="font-display text-[20vh] md:text-[30vh] opacity-20 font-bold mb-4 text-black leading-none">{p.step}</span>
-                            <h4 className="font-display text-5xl md:text-7xl font-bold uppercase mb-6">{p.title}</h4>
+                            <h3 className="font-display text-5xl md:text-7xl font-bold uppercase mb-6">{p.title}</h3>
                             <p className="font-sans text-xl md:text-2xl max-w-xl leading-relaxed">{p.desc}</p>
                         </div>
                     ))}
@@ -547,77 +450,25 @@ export default function Home() {
             </div>
         </section>
 
-        {/* Gallery */}
-        <section id="work" className="bg-[#050505] py-32 relative">
-            <div className="container mx-auto px-6 mb-24">
-                <h2 className="font-display text-6xl md:text-8xl font-bold uppercase text-center mb-4">Field Report</h2>
-                <div className="flex justify-center">
-                    <span className="font-mono text-blue-600 uppercase tracking-widest">[Live Site Documentation]</span>
-                </div>
-            </div>
-
-            <div className="flex flex-col gap-32 px-4 md:px-0">
-                <div className="container mx-auto flex flex-col md:flex-row items-center gap-12 group interactable">
-                    <div className="w-full md:w-2/3 overflow-hidden relative grayscale group-hover:grayscale-0 transition-all duration-700">
-                        <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=2669&auto=format&fit=crop" alt="Cable Jetting" className="w-full h-[60vh] object-cover hover-scale" />
-                        <div className="absolute bottom-0 left-0 bg-blue-600 text-white p-4 font-mono text-xs font-bold">
-                            // MUNICIPAL BUILD
-                        </div>
-                    </div>
-                    <div className="w-full md:w-1/3">
-                        <h3 className="font-display text-4xl font-bold mb-4 uppercase">Metro Ring <br/>Jetting</h3>
-                        <p className="font-sans text-gray-400 mb-6">35,000ft urban conduit placement. Zero downtime. Mandrel proofed and pressure verified prior to placement.</p>
-                        <div className="h-[1px] w-full bg-white/20 mb-4"></div>
-                        <ul className="font-mono text-xs text-gray-500 flex gap-4">
-                            <li>288ct Micro-Jetting</li>
-                            <li>Urban Density</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div className="container mx-auto flex flex-col md:flex-row-reverse items-center gap-12 group interactable">
-                    <div className="w-full md:w-2/3 overflow-hidden relative grayscale group-hover:grayscale-0 transition-all duration-700">
-                        <img src="https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?q=80&w=2670&auto=format&fit=crop" alt="Splice Tray" className="w-full h-[60vh] object-cover hover-scale" />
-                         <div className="absolute bottom-0 right-0 bg-blue-600 text-white p-4 font-mono text-xs font-bold">
-                            // ISP EXPANSION
-                        </div>
-                    </div>
-                    <div className="w-full md:w-1/3 text-right">
-                        <h3 className="font-display text-4xl font-bold mb-4 uppercase">Headend <br/>Termination</h3>
-                        <p className="font-sans text-gray-400 mb-6">High-density fusion splicing. 1440 terminations. Clean trays, labeled closures, 0.02dB avg loss.</p>
-                        <div className="h-[1px] w-full bg-white/20 mb-4"></div>
-                        <ul className="font-mono text-xs text-gray-500 flex gap-4 justify-end">
-                            <li>Data Center</li>
-                            <li>864ct Mass Fusion</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {/* Testimonials */}
-        <section className="py-32 bg-[#0a0a0a] relative">
+        {/* What You Get — Deliverables Preview */}
+        <section className="py-32 bg-[#050505] relative">
           <div className="container mx-auto px-6">
             <div className="mb-16">
-              <span className="font-mono text-blue-600 text-sm uppercase tracking-[0.2em]">[Client Testimonials]</span>
-              <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mt-4 text-white">Straight From<br/>The Field</h2>
+              <span className="font-mono text-blue-600 text-sm uppercase tracking-[0.2em]">[Deliverables]</span>
+              <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mt-4 text-white">What You<br/>Get</h2>
+              <p className="mt-4 text-lg text-gray-400 max-w-2xl">Every project includes a complete documentation package. No loose ends.</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {(testimonials as Testimonial[]).map((t, i) => (
-                <SpotlightCard key={t.id} className="testimonial-card border border-white/10 p-8 md:p-10 rounded-sm">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { title: 'OTDR Test Results', desc: 'End-to-end fiber characterization with splice loss data for every strand. Organized by cable and ready for review.', tag: 'Testing' },
+                { title: 'Organized Closures', desc: 'Clean tray routing, color-coded labeling, sealed entry ports, and strain relief. Ready for the next crew or the end client.', tag: 'Build Quality' },
+                { title: 'Closeout Package', desc: 'As-built records, geo-tagged photos, splice maps, and test data compiled into a handoff-ready documentation set.', tag: 'Documentation' },
+              ].map((item, i) => (
+                <SpotlightCard key={i} className="border border-white/10 p-8 rounded-sm">
                   <div className="relative z-10">
-                    <span className="font-display text-[80px] md:text-[100px] leading-none text-blue-600/10 absolute -top-4 -left-2 select-none">&ldquo;</span>
-                    <p className="font-sans text-gray-300 text-lg leading-relaxed mb-8 relative z-10 pt-8">
-                      {t.quote}
-                    </p>
-                    <div className="h-[1px] bg-white/10 mb-6"></div>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-heading text-white font-bold uppercase text-sm">{t.name}</p>
-                        <p className="font-mono text-xs text-gray-500 mt-1">{t.title} — {t.company}</p>
-                      </div>
-                      <span className="font-mono text-xs text-blue-600 uppercase tracking-wider hidden md:block">{t.metric}</span>
-                    </div>
+                    <span className="font-mono text-xs text-blue-600 uppercase tracking-widest">{item.tag}</span>
+                    <h3 className="font-heading text-xl font-bold text-white mt-3 mb-4">{item.title}</h3>
+                    <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
                   </div>
                 </SpotlightCard>
               ))}
@@ -625,8 +476,22 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Coverage Map */}
+        <section className="py-32 bg-[#0a0a0a] relative border-t border-white/10">
+          <div className="container mx-auto px-6">
+            <div className="mb-12">
+              <span className="font-mono text-blue-600 text-sm uppercase tracking-[0.2em]">[Coverage]</span>
+              <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mt-4 text-white">Where We<br/>Work</h2>
+              <p className="mt-4 text-lg text-gray-400 max-w-2xl">{siteContent?.coverage?.description || "Currently operating in Missouri, Georgia, Tennessee, Alabama, and Florida. Available for mobilization nationwide."}</p>
+            </div>
+            <div className="max-w-4xl mx-auto">
+              <USCoverageMap />
+            </div>
+          </div>
+        </section>
+
         {/* FAQ */}
-        <section className="faq-section py-32 bg-[#050505] relative">
+        <section className="faq-section py-32 bg-[#050505] relative border-t border-white/10">
           <div className="container mx-auto px-6">
             <div className="mb-16">
               <span className="font-mono text-blue-600 text-sm uppercase tracking-[0.2em]">[FAQ]</span>
@@ -638,147 +503,30 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Contact */}
-        <section id="contact" className="min-h-screen bg-blue-600 text-[#050505] relative flex items-center justify-center overflow-hidden">
+        {/* CTA Block — links to /request, no inline form */}
+        <section id="contact" className="min-h-[70vh] bg-blue-600 text-[#050505] relative flex items-center justify-center overflow-hidden">
             <div className="absolute inset-0 z-0 opacity-10" style={{ backgroundImage: "repeating-linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), repeating-linear-gradient(45deg, #000 25%, #050505 25%, #050505 75%, #000 75%, #000)", backgroundPosition: "0 0, 10px 10px", backgroundSize: "20px 20px" }}></div>
-            
+
             <div className="container mx-auto px-6 relative z-10 w-full max-w-4xl">
                 <div id="contact-card" className="bg-[#050505] text-white p-8 md:p-16 shadow-2xl relative">
                     <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-600"></div>
                     <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-blue-600"></div>
 
-                    <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mb-2">Send Prints.</h2>
-                    <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mb-8 text-transparent" style={{ WebkitTextStroke: '1px #2563EB' }}>Get a Schedule.</h2>
-                    
-                    <p className="font-sans text-gray-400 mb-12 text-lg">We don't need a sales pitch. We need your scope. Fill out the manifest below and we will mobilize.</p>
+                    <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mb-2">{siteContent?.cta?.heading1 || "Send Prints."}</h2>
+                    <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mb-8 text-transparent" style={{ WebkitTextStroke: '1px #2563EB' }}>{siteContent?.cta?.heading2 || "Get a Schedule."}</h2>
 
-                    <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="relative group">
-                                <label className="font-mono text-xs uppercase text-gray-500 mb-2 block">Project Lead</label>
-                                <input type="text" placeholder="Name" className="w-full bg-transparent border-b border-gray-700 py-3 focus:border-blue-600 focus:outline-none transition-colors text-lg interactable" />
-                            </div>
-                            <div className="relative group">
-                                <label className="font-mono text-xs uppercase text-gray-500 mb-2 block">Comms</label>
-                                <input type="email" placeholder="Email Address" className="w-full bg-transparent border-b border-gray-700 py-3 focus:border-blue-600 focus:outline-none transition-colors text-lg interactable" />
-                            </div>
-                        </div>
+                    <p className="font-sans text-gray-400 mb-12 text-lg max-w-xl">
+                      {siteContent?.cta?.description || "Tell us what needs to be placed or spliced. We review your scope and respond with crew availability and a production timeline."}
+                    </p>
 
-                        <div className="relative group py-2">
-                             <label className="font-mono text-xs uppercase text-gray-500 mb-4 block">Deployment Priority</label>
-                             <div className="flex flex-col md:flex-row gap-4">
-                                 <label className="flex items-center gap-3 cursor-pointer group/radio">
-                                     <input type="radio" name="priority" className="peer sr-only" defaultChecked />
-                                     <div className="w-5 h-5 border border-gray-600 rounded-full peer-checked:bg-blue-600 peer-checked:border-blue-600 transition-colors relative flex items-center justify-center">
-                                         <div className="w-2 h-2 bg-black rounded-full opacity-0 peer-checked:opacity-100"></div>
-                                     </div>
-                                     <span className="font-sans text-gray-300 group-hover/radio:text-white transition-colors">Standard Mobilization</span>
-                                 </label>
-                                 <label className="flex items-center gap-3 cursor-pointer group/radio">
-                                     <input type="radio" name="priority" className="peer sr-only" />
-                                     <div className="w-5 h-5 border border-gray-600 rounded-full peer-checked:bg-red-500 peer-checked:border-red-500 transition-colors relative flex items-center justify-center">
-                                         <div className="w-2 h-2 bg-black rounded-full opacity-0 peer-checked:opacity-100"></div>
-                                     </div>
-                                     <span className="font-sans text-gray-300 group-hover/radio:text-white transition-colors flex items-center gap-2">
-                                         Emergency Restoration (24/7) <Siren className="w-4 h-4 text-red-500 animate-pulse" />
-                                     </span>
-                                 </label>
-                             </div>
-                        </div>
-
-                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="relative group">
-                                <label className="font-mono text-xs uppercase text-gray-500 mb-2 block">Service Type</label>
-                                <select className="w-full bg-transparent border-b border-gray-700 py-3 focus:border-blue-600 focus:outline-none transition-colors text-lg appearance-none rounded-none interactable text-gray-400">
-                                    <option>Jetting Only</option>
-                                    <option>Splicing Only</option>
-                                    <option>Full Turnkey</option>
-                                </select>
-                            </div>
-                            <div className="relative group">
-                                <label className="font-mono text-xs uppercase text-gray-500 mb-2 block">Est. Footage / Count</label>
-                                <input type="text" placeholder="e.g. 50k ft or 288ct" className="w-full bg-transparent border-b border-gray-700 py-3 focus:border-blue-600 focus:outline-none transition-colors text-lg interactable" />
-                            </div>
-                        </div>
-
-                        <div className="relative group">
-                            <label className="font-mono text-xs uppercase text-gray-500 mb-2 block">Conduit / Cable Specs</label>
-                            <textarea rows={2} placeholder="e.g. 1.25in SDR11 HDPE, Ribbon Cable, Loose Tube..." className="w-full bg-transparent border-b border-gray-700 py-3 focus:border-blue-600 focus:outline-none transition-colors text-lg interactable resize-none"></textarea>
-                        </div>
-
-                        <MagneticButton className="w-full bg-white text-black font-display font-bold uppercase text-2xl py-6 mt-8 hover:bg-blue-600 hover:text-white transition-all duration-300 interactable flex items-center justify-between px-8 group">
-                            <span className="relative z-10">Initialize Request</span>
-                            <ArrowRight className="relative z-10 group-hover:translate-x-2 transition-transform" />
-                        </MagneticButton>
-                    </form>
+                    <MagneticButton href="/request" className="inline-flex items-center gap-4 bg-white text-black font-display font-bold uppercase text-xl md:text-2xl py-5 px-8 hover:bg-blue-600 hover:text-white transition-all duration-300 group">
+                      <span>Request a Crew</span>
+                      <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+                    </MagneticButton>
                 </div>
             </div>
         </section>
       </main>
-
-      <footer className="bg-[#050505] text-gray-500 py-12 border-t border-white/10">
-          <div className="container mx-auto px-6">
-                 {/* Compliance Strip */}
-                 <div className="flex flex-wrap gap-6 mb-12 border-b border-white/5 pb-8">
-                     <div className="flex items-center gap-3">
-                         <ShieldCheck className="w-5 h-5 text-blue-600" />
-                         <span className="font-mono text-xs uppercase tracking-wider text-gray-400">OSHA 30 Certified Crews</span>
-                     </div>
-                     <div className="flex items-center gap-3">
-                         <ShieldCheck className="w-5 h-5 text-blue-600" />
-                         <span className="font-mono text-xs uppercase tracking-wider text-gray-400">Fully Bonded & Insured</span>
-                     </div>
-                     <div className="flex items-center gap-3">
-                         <ShieldCheck className="w-5 h-5 text-blue-600" />
-                         <span className="font-mono text-xs uppercase tracking-wider text-gray-400">DOT Compliant Fleet</span>
-                     </div>
-                     <div className="flex items-center gap-3 ml-auto">
-                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                        <span className="font-mono text-xs uppercase tracking-wider text-white">Status: Nationwide Deployment Active</span>
-                     </div>
-                 </div>
-
-                <div className="flex flex-col md:flex-row justify-between items-end">
-                    <div>
-                        <h4 className="font-display text-2xl text-white uppercase font-bold mb-4">Fiber Guys</h4>
-                        <p className="font-mono text-xs max-w-xs">Infrastructure construction. <br/>Built for the heavy lift.</p>
-                    </div>
-                    <div className="flex gap-6 mt-8 md:mt-0 font-mono text-xs uppercase">
-                        <a href="#" className="hover:text-white transition-colors interactable">LinkedIn</a>
-                        <a href="#" className="hover:text-white transition-colors interactable">Email</a>
-                        <span className="text-blue-600">© 2024 Fiber Guys</span>
-                    </div>
-                </div>
-            </div>
-        </footer>
-
-        <style dangerouslySetInnerHTML={{__html: `
-          @keyframes scroll {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-          }
-          .marquee-track {
-            display: flex;
-            width: max-content;
-            animation: marquee 25s linear infinite;
-          }
-          .marquee-content {
-            display: flex;
-            gap: 3rem;
-            padding-right: 3rem;
-            flex-shrink: 0;
-          }
-          @media (min-width: 768px) {
-            .marquee-content {
-              gap: 5rem;
-              padding-right: 5rem;
-            }
-          }
-          @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-          }
-        `}} />
     </div>
   );
 }

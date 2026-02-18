@@ -2,21 +2,36 @@
   {
     "id": "faq1",
     "question": "What's your daily jetting output?",
-    "answer": "Typical daily production ranges from 15,000 to 25,000 feet depending on conduit diameter, route complexity, and cable count. Our rigs are calibrated for both microduct and standard 1.25\" HDPE. We mandrel-proof and pressure-verify every segment before placement begins."
+    "answer": "Typical daily production ranges from 15,000 to 25,000 feet depending on conduit diameter, route complexity, and cable count. We handle standard HDPE, SDR-11, and microduct systems. Every segment is mandrel-tested and pressure-verified before placement begins."
   },
   {
     "id": "faq2",
     "question": "What does a clean handoff look like?",
-    "answer": "Every enclosure is organized with clean tray routing, labeled strands, and sealed closures. We leave the site ready for the next crew or the end client — no loose ends, no callbacks. Geo-tagged photos of every splice point are available on request."
+    "answer": "Every enclosure is organized with clean tray routing, labeled strands, and sealed closures. We leave the site ready for the next crew or the end client — no loose ends, no callbacks. Documentation includes OTDR traces, splice loss reports, and geo-tagged photos of every splice point."
   },
   {
     "id": "faq3",
     "question": "What fiber types and counts do you handle?",
-    "answer": "We work with single-mode, multimode, and ribbon fiber across counts from 12 to 864. Our splicing crews are equipped for both mass fusion (ribbon) and individual single-fiber fusion. Cable types include loose-tube, central-tube, and all-dielectric self-supporting (ADSS)."
+    "answer": "We work with single-mode, multimode, and ribbon fiber across counts from 12 to 864. Our splicing crews are equipped for both mass fusion (ribbon) and individual single-fiber fusion. Cable types include loose-tube, central-tube, ADSS, and armored configurations."
   },
   {
     "id": "faq4",
     "question": "How fast can you mobilize a crew?",
-    "answer": "Standard mobilization is 5 to 10 business days from signed scope. For emergency restoration and network outages, we maintain a 24-hour rapid deployment capability with crews staged across multiple regions. Call the emergency line and we move."
+    "answer": "Standard mobilization is 5 to 10 business days from signed scope. For emergency restoration and network outages, we can mobilize same-day depending on crew positioning and location. Contact us directly for emergency availability."
+  },
+  {
+    "id": "faq5",
+    "question": "What documentation do you provide?",
+    "answer": "Every project includes a complete documentation package: OTDR test results for every strand, splice loss reports organized by closure, as-built records with footage counts, geo-tagged photos, tray maps, and labeled enclosure documentation. Everything is organized for client review or closeout submission."
+  },
+  {
+    "id": "faq6",
+    "question": "What are your safety practices?",
+    "answer": "Our crews follow documented safety protocols on every job. This includes daily tailboard safety briefings, Job Hazard Analysis for every work site, proper PPE requirements, traffic control compliance, and confined space entry protocols for vault and manhole work."
+  },
+  {
+    "id": "faq7",
+    "question": "Do you handle emergency restoration?",
+    "answer": "Yes. For network outages and emergency fiber restoration, we can mobilize same-day. Standard project mobilization is 5 to 10 business days, but emergency work gets priority — call us directly and we move."
   }
 ]

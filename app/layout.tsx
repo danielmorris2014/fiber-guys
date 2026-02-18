@@ -66,10 +66,9 @@ export default function RootLayout({
               name: "Fiber Guys",
               description:
                 "Production-focused fiber jetting and precision splicing crews.",
-              url: "https://fiberguys.com",
+              url: process.env.NEXT_PUBLIC_SITE_URL || "https://fiberguys.com",
               email: "info@fiberguys.com",
-              telephone: "+1-555-123-4567",
-              areaServed: "Worldwide",
+              areaServed: "US",
               serviceType: [
                 "Fiber Optic Cable Jetting",
                 "Fiber Optic Splicing",
@@ -82,6 +81,12 @@ export default function RootLayout({
         className={`${oswald.variable} ${inter.variable} ${spaceMono.variable} antialiased`}
       >
         <Providers>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-orange focus:text-white focus:px-4 focus:py-2 focus:text-sm focus:font-mono"
+          >
+            Skip to content
+          </a>
           <Preloader />
           <GrainOverlay />
           <CustomCursor />

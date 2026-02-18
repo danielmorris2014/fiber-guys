@@ -1,16 +1,30 @@
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { ContactForm } from "@/components/forms/ContactForm";
-import { GlobeWrapper } from "@/components/contact/GlobeWrapper";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { USCoverageMap } from "@/components/ui/USCoverageMap";
+import { Mail, MapPin } from "lucide-react";
+import { getContent } from "@/lib/content-store";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Get in touch with Fiber Guys. Production-focused fiber jetting and splicing crews available worldwide.",
+    "Get in touch with Fiber Guys. Production-focused fiber jetting and splicing crews available nationwide.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const mapData = (await getContent("map")) as {
+    activeStates: string[];
+    pastStates: string[];
+  } | null;
+
+  const siteContent = (await getContent("site")) as {
+    coverage?: { description?: string };
+  } | null;
+
+  const coverageDesc =
+    siteContent?.coverage?.description ||
+    "Currently operating in Missouri, Georgia, Tennessee, Alabama, and Florida. Available for mobilization nationwide.";
+
   return (
     <main className="pt-20 lg:pt-24">
       <section className="mx-auto max-w-7xl px-6 lg:px-8 py-section-sm lg:py-section">
@@ -46,33 +60,17 @@ export default function ContactPage() {
 
               <div className="flex items-start gap-4">
                 <div className="p-3 rounded-lg bg-orange-soft shrink-0">
-                  <Phone className="w-5 h-5 text-orange" />
-                </div>
-                <div>
-                  <h2 className="font-heading text-sm font-bold tracking-tight">Phone</h2>
-                  <a
-                    href="tel:+15551234567"
-                    className="text-muted hover:text-orange transition-colors text-sm mt-1 block"
-                  >
-                    (555) 123-4567
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="p-3 rounded-lg bg-orange-soft shrink-0">
                   <MapPin className="w-5 h-5 text-orange" />
                 </div>
                 <div>
                   <h2 className="font-heading text-sm font-bold tracking-tight">
-                    Headquarters
+                    Service Area
                   </h2>
                   <p className="text-muted text-sm mt-1">
-                    123 Fiber Lane, Suite 200<br />
-                    Denver, CO 80202
+                    Crews available for deployment nationwide
                   </p>
                   <p className="text-muted/60 text-xs mt-2">
-                    Crews available for deployment nationwide
+                    Standard: 5&ndash;10 business days / Emergency: same-day
                   </p>
                 </div>
               </div>
@@ -106,17 +104,18 @@ export default function ContactPage() {
           </ScrollReveal>
         </div>
 
-        {/* Interactive Globe */}
+        {/* Coverage Map */}
         <div className="mt-16 lg:mt-24">
           <ScrollReveal>
             <div className="rounded-2xl border border-line bg-bg-2 p-6 lg:p-10 overflow-hidden">
               <h2 className="font-heading text-lg font-bold tracking-tight mb-2">
-                Coverage Map
+                Coverage Area
               </h2>
-              <p className="text-sm text-muted mb-8">
-                Crews available for deployment across the continental US and beyond.
-              </p>
-              <GlobeWrapper />
+              <p className="text-sm text-muted mb-8">{coverageDesc}</p>
+              <USCoverageMap
+                activeStates={mapData?.activeStates}
+                pastStates={mapData?.pastStates}
+              />
             </div>
           </ScrollReveal>
         </div>

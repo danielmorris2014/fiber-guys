@@ -1,6 +1,7 @@
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { StatsGrid } from "@/components/about/StatsGrid";
+import { ShieldCheck, Truck, Award } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -30,6 +31,15 @@ const values = [
     description:
       "You'll know what we can do, when we can start, and what it takes to get there. No runaround, no over-promising, no surprises in the field.",
   },
+];
+
+const safetyItems = [
+  "Daily tailboard safety briefings before work begins",
+  "Job Hazard Analysis (JHA) for every work site",
+  "Proper PPE requirements enforced on all projects",
+  "Traffic control and work zone safety compliance",
+  "Confined space entry protocols for vault and manhole work",
+  "Equipment inspection and maintenance documentation",
 ];
 
 export default function AboutPage() {
@@ -70,7 +80,7 @@ export default function AboutPage() {
           <ScrollReveal delay={0.15}>
             <div className="rounded-2xl border border-line bg-bg-2 p-8 lg:p-10">
               <h2 className="font-heading text-h4 font-bold tracking-tight mb-6">
-                By the Numbers
+                Capabilities at a Glance
               </h2>
               <StatsGrid />
             </div>
@@ -105,22 +115,133 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="mx-auto max-w-7xl px-6 lg:px-8 py-section-sm lg:py-section text-center">
-        <ScrollReveal>
-          <h2 className="font-heading text-h2 lg:text-h1 font-bold tracking-tighter">
-            Work with us.
-          </h2>
-          <p className="mt-4 text-lg text-muted max-w-lg mx-auto">
-            If you need fiber placed or spliced — on time, on spec, with clean
-            documentation — let&apos;s talk.
-          </p>
-          <div className="mt-8">
-            <MagneticButton href="/request" size="large">
-              Request a Crew
-            </MagneticButton>
+      {/* Safety & Compliance */}
+      <section className="mx-auto max-w-7xl px-6 lg:px-8 py-section-sm lg:py-section">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+          <ScrollReveal>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 rounded-lg bg-orange-soft">
+                <ShieldCheck className="w-6 h-6 text-orange" />
+              </div>
+              <p className="caption-lg text-orange">Safety & Compliance</p>
+            </div>
+            <h2 className="font-heading text-h2 lg:text-h1 font-bold tracking-tighter">
+              Safety is the standard.
+            </h2>
+            <p className="mt-4 text-muted leading-relaxed">
+              Our crews follow documented safety protocols on every job site.
+              Safety isn&apos;t a box to check — it&apos;s how we operate. We
+              hold daily tailboard briefings, conduct hazard analyses, and
+              maintain compliance with applicable OSHA and DOT regulations.
+            </p>
+          </ScrollReveal>
+
+          <ScrollReveal delay={0.15}>
+            <div className="space-y-4">
+              <h3 className="caption-lg text-text font-semibold">
+                Standard Practices
+              </h3>
+              <ul className="space-y-3">
+                {safetyItems.map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange mt-2 shrink-0" />
+                    <span className="text-sm text-muted leading-relaxed">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* Coverage & Mobilization */}
+      <section className="bg-bg-2 border-y border-line">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 py-section-sm lg:py-section">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+            <ScrollReveal>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 rounded-lg bg-orange-soft">
+                  <Truck className="w-6 h-6 text-orange" />
+                </div>
+                <p className="caption-lg text-orange">Coverage & Mobilization</p>
+              </div>
+              <h2 className="font-heading text-h2 lg:text-h1 font-bold tracking-tighter">
+                Nationwide deployment.
+              </h2>
+              <p className="mt-4 text-muted leading-relaxed">
+                Our crews are available for deployment across the continental
+                United States. Standard mobilization takes 5–10 business days
+                from signed scope. For emergency restoration and network outages,
+                we can mobilize same-day.
+              </p>
+            </ScrollReveal>
+
+            <ScrollReveal delay={0.15}>
+              <div className="space-y-6">
+                <div className="border border-line rounded-lg p-6 bg-bg">
+                  <h3 className="font-heading text-sm font-bold tracking-tight text-text">
+                    Standard Mobilization
+                  </h3>
+                  <p className="text-sm text-muted mt-2">
+                    5–10 business days from signed scope. Equipment and crew
+                    deployed to your job site, ready to produce.
+                  </p>
+                </div>
+                <div className="border border-line rounded-lg p-6 bg-bg">
+                  <h3 className="font-heading text-sm font-bold tracking-tight text-text">
+                    Emergency Restoration
+                  </h3>
+                  <p className="text-sm text-muted mt-2">
+                    Same-day mobilization for network outages and emergency fiber
+                    restoration. Call us directly and we move.
+                  </p>
+                </div>
+              </div>
+            </ScrollReveal>
           </div>
+        </div>
+      </section>
+
+      {/* Certifications placeholder */}
+      <section className="mx-auto max-w-7xl px-6 lg:px-8 py-section-sm lg:py-section">
+        <ScrollReveal>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 rounded-lg bg-orange-soft">
+              <Award className="w-6 h-6 text-orange" />
+            </div>
+            <p className="caption-lg text-orange">Standards</p>
+          </div>
+          <h2 className="font-heading text-h2 lg:text-h1 font-bold tracking-tighter">
+            Industry standards compliance.
+          </h2>
+          <p className="mt-4 text-muted leading-relaxed max-w-2xl">
+            Our work follows established fiber optic construction and testing
+            standards including applicable NECA/FOA, TIA, and BICSI guidelines.
+            Specific certifications and credentials are available upon request.
+          </p>
         </ScrollReveal>
+      </section>
+
+      {/* CTA */}
+      <section className="border-t border-line">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 py-section-sm lg:py-section text-center">
+          <ScrollReveal>
+            <h2 className="font-heading text-h2 lg:text-h1 font-bold tracking-tighter">
+              Work with us.
+            </h2>
+            <p className="mt-4 text-lg text-muted max-w-lg mx-auto">
+              If you need fiber placed or spliced — on time, on spec, with clean
+              documentation — let&apos;s talk.
+            </p>
+            <div className="mt-8">
+              <MagneticButton href="/request" size="large">
+                Request a Crew
+              </MagneticButton>
+            </div>
+          </ScrollReveal>
+        </div>
       </section>
     </main>
   );
