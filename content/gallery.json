@@ -1,0 +1,227 @@
+[
+  {
+    "id": "jetting-01",
+    "title": "288-Count Placement Through 2\" Conduit",
+    "category": "jetting",
+    "location": "Austin, TX",
+    "description": "High-count fiber jetting through existing conduit infrastructure across a 4-mile backbone run.",
+    "src": "/images/gallery/jetting-01.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "jetting-02",
+    "title": "Long-Haul Interstate Run",
+    "category": "jetting",
+    "location": "Phoenix, AZ",
+    "description": "12,000-foot continuous placement along the I-10 corridor with zero cable damage.",
+    "src": "/images/gallery/jetting-02.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "jetting-03",
+    "title": "Campus Distribution Network",
+    "category": "jetting",
+    "location": "Denver, CO",
+    "description": "Multi-path jetting across a corporate campus with tight bend radius requirements.",
+    "src": "/images/gallery/jetting-03.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "jetting-04",
+    "title": "Downtown Conduit Pull",
+    "category": "jetting",
+    "location": "Nashville, TN",
+    "description": "Urban fiber placement through congested underground conduit in the downtown core.",
+    "src": "/images/gallery/jetting-04.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "jetting-05",
+    "title": "Industrial Park Backbone",
+    "category": "jetting",
+    "location": "Dallas, TX",
+    "description": "Production jetting for a 30-building industrial park fiber backbone.",
+    "src": "/images/gallery/jetting-05.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "splicing-01",
+    "title": "144-Fiber Ribbon Splice",
+    "category": "splicing",
+    "location": "Atlanta, GA",
+    "description": "Mass fusion splice of 144-count ribbon fiber with sub-0.05dB average loss.",
+    "src": "/images/gallery/splicing-01.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "splicing-02",
+    "title": "Clean Tray Organization",
+    "category": "splicing",
+    "location": "Charlotte, NC",
+    "description": "Precision tray routing with color-coded labeling ready for customer handoff.",
+    "src": "/images/gallery/splicing-02.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "splicing-03",
+    "title": "Aerial Closure Splice",
+    "category": "splicing",
+    "location": "Orlando, FL",
+    "description": "72-count aerial closure with weather-sealed enclosure and documented test results.",
+    "src": "/images/gallery/splicing-03.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "splicing-04",
+    "title": "Central Office Termination",
+    "category": "splicing",
+    "location": "Houston, TX",
+    "description": "High-density termination panel with clean fiber management and labeled ports.",
+    "src": "/images/gallery/splicing-04.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "splicing-05",
+    "title": "Underground Vault Splice",
+    "category": "splicing",
+    "location": "San Antonio, TX",
+    "description": "288-count splice in a confined underground vault with full OTDR documentation.",
+    "src": "/images/gallery/splicing-05.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "crew-01",
+    "title": "Morning Mobilization",
+    "category": "crew",
+    "location": "Memphis, TN",
+    "description": "Crew staging and equipment check before a full day of production jetting.",
+    "src": "/images/gallery/crew-01.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "crew-02",
+    "title": "Field Team Coordination",
+    "category": "crew",
+    "location": "Raleigh, NC",
+    "description": "Lead technician coordinating splice assignments across multiple closure locations.",
+    "src": "/images/gallery/crew-02.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "crew-03",
+    "title": "On-Site Safety Briefing",
+    "category": "crew",
+    "location": "Jacksonville, FL",
+    "description": "Daily tailboard safety meeting before entering active construction zones.",
+    "src": "/images/gallery/crew-03.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "crew-04",
+    "title": "Night Shift Operations",
+    "category": "crew",
+    "location": "Las Vegas, NV",
+    "description": "Overnight placement crew working during off-peak hours to minimize traffic impact.",
+    "src": "/images/gallery/crew-04.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "equipment-01",
+    "title": "Fiber Jetting Unit",
+    "category": "equipment",
+    "location": "Oklahoma City, OK",
+    "description": "Production-grade jetting compressor rigged and ready for long-haul cable placement.",
+    "src": "/images/gallery/equipment-01.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "equipment-02",
+    "title": "Fusion Splicer Setup",
+    "category": "equipment",
+    "location": "Tampa, FL",
+    "description": "Core-alignment fusion splicer with real-time loss estimation and automated alignment.",
+    "src": "/images/gallery/equipment-02.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "equipment-03",
+    "title": "OTDR Testing Rig",
+    "category": "equipment",
+    "location": "Birmingham, AL",
+    "description": "High-resolution OTDR unit used for end-to-end fiber characterization and documentation.",
+    "src": "/images/gallery/equipment-03.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "equipment-04",
+    "title": "Cable Reel Staging",
+    "category": "equipment",
+    "location": "Louisville, KY",
+    "description": "Pre-staged fiber reels organized by count and run assignment at the equipment yard.",
+    "src": "/images/gallery/equipment-04.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "equipment-05",
+    "title": "Conduit Inspection Camera",
+    "category": "equipment",
+    "location": "Cincinnati, OH",
+    "description": "Pre-jet conduit inspection to verify pathway integrity before cable placement.",
+    "src": "/images/gallery/equipment-05.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "closeout-01",
+    "title": "OTDR Test Results Package",
+    "category": "closeout",
+    "location": "Nashville, TN",
+    "description": "Complete OTDR trace documentation organized by strand and ready for customer review.",
+    "src": "/images/gallery/closeout-01.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "closeout-02",
+    "title": "As-Built Documentation",
+    "category": "closeout",
+    "location": "Dallas, TX",
+    "description": "Detailed as-built records with splice locations, footage counts, and test data.",
+    "src": "/images/gallery/closeout-02.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "closeout-03",
+    "title": "Labeled Splice Enclosure",
+    "category": "closeout",
+    "location": "Atlanta, GA",
+    "description": "Final enclosure with permanent labeling, strain relief, and sealed entry ports.",
+    "src": "/images/gallery/closeout-03.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "closeout-04",
+    "title": "Customer Handoff Binder",
+    "category": "closeout",
+    "location": "Charlotte, NC",
+    "description": "Organized closeout binder with test results, photos, and sign-off documentation.",
+    "src": "/images/gallery/closeout-04.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "jetting-06",
+    "title": "Micro-Duct Placement",
+    "category": "jetting",
+    "location": "Portland, OR",
+    "description": "Precision micro-duct jetting for FTTH distribution in a residential subdivision.",
+    "src": "/images/gallery/jetting-06.jpg",
+    "blurDataURL": ""
+  },
+  {
+    "id": "splicing-06",
+    "title": "Multi-Tray Closure Build",
+    "category": "splicing",
+    "location": "Knoxville, TN",
+    "description": "12-tray splice closure with express fibers and distribution legs clearly separated.",
+    "src": "/images/gallery/splicing-06.jpg",
+    "blurDataURL": ""
+  }
+]

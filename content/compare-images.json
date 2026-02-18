@@ -1,0 +1,18 @@
+[
+  {
+    "id": "splice-before-after",
+    "title": "Splice Tray Organization",
+    "before": "/images/gallery/splicing-01.jpg",
+    "after": "/images/gallery/splicing-02.jpg",
+    "beforeLabel": "Before",
+    "afterLabel": "After"
+  },
+  {
+    "id": "conduit-before-after",
+    "title": "Conduit Cable Placement",
+    "before": "/images/gallery/jetting-01.jpg",
+    "after": "/images/gallery/jetting-02.jpg",
+    "beforeLabel": "Empty Conduit",
+    "afterLabel": "Fiber Placed"
+  }
+]

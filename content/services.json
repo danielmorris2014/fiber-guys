@@ -1,0 +1,34 @@
+[
+  {
+    "id": "jetting",
+    "title": "Fiber Jetting",
+    "slug": "jetting",
+    "tagline": "High-output placement built for long runs and consistent results.",
+    "description": "Our jetting crews specialize in production-scale fiber placement through conduit systems of all sizes. From single-duct metro runs to multi-path campus distributions, we deliver cable safely, efficiently, and on schedule. Every run is monitored for tension and pressure to protect cable integrity from start to finish.",
+    "features": [
+      "Production-grade jetting equipment for runs up to 15,000+ feet",
+      "Pre-jet conduit inspection and pathway verification",
+      "Real-time tension monitoring during placement",
+      "Multi-count cable handling from 12 to 864 fibers",
+      "Tight bend radius navigation without cable damage",
+      "Coordinated reel staging and logistics planning"
+    ],
+    "icon": "cable"
+  },
+  {
+    "id": "splicing",
+    "title": "Fiber Splicing",
+    "slug": "splicing",
+    "tagline": "Clean trays, clear labeling, and documentation that's ready for closeout.",
+    "description": "Precision matters when fibers meet. Our splicing teams deliver consistently low-loss fusion splices with organized tray routing, permanent labeling, and OTDR documentation on every closure. When we hand off a splice, it's ready for the customer to inspect and the project to close out.",
+    "features": [
+      "Core-alignment fusion splicing with sub-0.05dB average loss",
+      "Ribbon and single-fiber splicing capabilities",
+      "Clean tray organization with color-coded routing",
+      "Permanent labeling on every closure and tray",
+      "Full OTDR testing and documentation per strand",
+      "Closeout-ready packages with test results and photos"
+    ],
+    "icon": "zap"
+  }
+]

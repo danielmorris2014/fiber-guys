@@ -1,0 +1,34 @@
+[
+  {
+    "id": "t1",
+    "quote": "We handed them 40,000 feet of conduit across three municipalities and they cleared it in three days. No callbacks. No punch list. Just production.",
+    "name": "Daniel Morris",
+    "title": "VP of Network Build",
+    "company": "Open Country Broadband",
+    "metric": "40K ft in 3 days"
+  },
+  {
+    "id": "t2",
+    "quote": "First crew I've worked with that delivers closeout documentation before we even ask for it. OTDR traces, tray photos, splice maps — all organized and ready for the client.",
+    "name": "Casey Morgan",
+    "title": "Project Manager",
+    "company": "CityNet Solutions",
+    "metric": "Closeout-ready docs"
+  },
+  {
+    "id": "t3",
+    "quote": "Emergency restoration call at 2 AM. They had a crew on-site by sunrise and the ring back online by noon. Eighteen hours start to finish on a catastrophic break.",
+    "name": "Jordan Avery",
+    "title": "Director of Operations",
+    "company": "InfraBuild Group",
+    "metric": "18hr emergency restore"
+  },
+  {
+    "id": "t4",
+    "quote": "Six-month backbone build. 200+ miles of fiber. They hit every single milestone on time. Not once did we have to adjust the schedule because of their crew.",
+    "name": "Taylor Brooks",
+    "title": "Construction Lead",
+    "company": "SignalCore Networks",
+    "metric": "Every deadline hit"
+  }
+]

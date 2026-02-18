@@ -1,0 +1,22 @@
+[
+  {
+    "id": "faq1",
+    "question": "What's your daily jetting output?",
+    "answer": "Typical daily production ranges from 15,000 to 25,000 feet depending on conduit diameter, route complexity, and cable count. Our rigs are calibrated for both microduct and standard 1.25\" HDPE. We mandrel-proof and pressure-test every segment before placement begins."
+  },
+  {
+    "id": "faq2",
+    "question": "What closeout documentation do you provide?",
+    "answer": "Every project ships with bidirectional OTDR traces (.SOR files), optical power meter readings, geo-tagged splice photos, organized tray maps, and a full closeout package in PDF format. Documentation is delivered within 24 hours of project completion — usually same day."
+  },
+  {
+    "id": "faq3",
+    "question": "What fiber types and counts do you handle?",
+    "answer": "We work with single-mode, multimode, and ribbon fiber across counts from 12 to 864. Our splicing crews are equipped for both mass fusion (ribbon) and individual single-fiber fusion. Cable types include loose-tube, central-tube, and all-dielectric self-supporting (ADSS)."
+  },
+  {
+    "id": "faq4",
+    "question": "How fast can you mobilize a crew?",
+    "answer": "Standard mobilization is 5 to 10 business days from signed scope. For emergency restoration and network outages, we maintain a 24-hour rapid deployment capability with crews staged across multiple regions. Call the emergency line and we move."
+  }
+]
