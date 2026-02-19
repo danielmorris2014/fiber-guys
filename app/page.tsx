@@ -322,12 +322,17 @@ export default function Home() {
                   <p className="font-mono text-sm text-gray-500 max-w-sm">
                     {siteContent?.hero?.subtitle || "Production-grade fiber construction. Jetting and splicing crews for telecom contractors nationwide."}
                   </p>
-                  <Link href="/request" className="group flex items-center gap-3 px-0 py-2 hover:opacity-80 transition-opacity font-mono text-xs uppercase tracking-widest text-white interactable">
-                    <div className="w-8 h-8 border border-white/20 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-600 transition-colors">
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                    <span className="border-b border-transparent group-hover:border-blue-600 transition-colors">Request a Crew</span>
-                  </Link>
+                  <div className="flex items-center gap-5">
+                    <Link href="/request" className="group flex items-center gap-3 px-0 py-2 hover:opacity-80 transition-opacity font-mono text-xs uppercase tracking-widest text-white interactable">
+                      <div className="w-8 h-8 border border-white/20 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-600 transition-colors">
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
+                      <span className="border-b border-transparent group-hover:border-blue-600 transition-colors">Request a Crew</span>
+                    </Link>
+                    <Link href="/request?tab=prints" className="group flex items-center gap-3 px-0 py-2 hover:opacity-80 transition-opacity font-mono text-xs uppercase tracking-widest text-white/50 hover:text-white interactable">
+                      <span className="border border-white/20 px-4 py-1.5 group-hover:border-blue-600 group-hover:text-blue-600 transition-colors">Submit Prints</span>
+                    </Link>
+                  </div>
                 </div>
               </motion.div>
             ) : (
@@ -451,6 +456,39 @@ export default function Home() {
             </div>
         </section>
 
+        {/* Tactical Fleet Deployment */}
+        <section className="py-32 bg-[#050505] relative border-b border-white/10">
+          <div className="container mx-auto px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+              <div>
+                <span className="font-mono text-blue-600 text-sm uppercase tracking-[0.2em]">[Resources]</span>
+                <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mt-4 text-white">Tactical Fleet<br/>Deployment</h2>
+                <p className="mt-6 text-lg text-gray-400 leading-relaxed">
+                  We match the machine to the mission. Instead of throwing blind resources at a project, we engineer our equipment deployment to fit your specific scope, timeline, and budget.
+                </p>
+                <p className="mt-4 text-gray-500 leading-relaxed">
+                  From high-capacity jetters for long-haul runs to agile setups for tight metro builds, we scale our footprint to maximize your project&apos;s efficiency and eliminate unnecessary overhead.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { label: 'Long-Haul', desc: 'High-capacity jetting rigs for extended conduit runs and interstate corridors.' },
+                  { label: 'Metro / Urban', desc: 'Compact, agile setups for congested duct paths and tight pull boxes.' },
+                  { label: 'High-Count', desc: 'Mass fusion and ribbon splicing rigs for 144–864ct cable builds.' },
+                  { label: 'Emergency', desc: 'Pre-staged restoration kits for same-day mobilization on outage calls.' },
+                ].map((item) => (
+                  <SpotlightCard key={item.label} className="border border-white/10 p-5 rounded-sm">
+                    <div className="relative z-10">
+                      <h3 className="font-mono text-xs text-blue-600 uppercase tracking-widest mb-2">{item.label}</h3>
+                      <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+                    </div>
+                  </SpotlightCard>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* What You Get — Deliverables Preview */}
         <section className="py-32 bg-[#050505] relative">
           <div className="container mx-auto px-6">
@@ -477,13 +515,49 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Coverage Map */}
+        {/* Safety & Compliance */}
         <section className="py-32 bg-[#0a0a0a] relative border-t border-white/10">
           <div className="container mx-auto px-6">
+            <div className="mb-16">
+              <span className="font-mono text-blue-600 text-sm uppercase tracking-[0.2em]">[Compliance]</span>
+              <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mt-4 text-white">Built on Safety<br/>&amp; Compliance</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  title: 'Daily JSAs & OSHA',
+                  desc: 'Strict PPE protocols, daily Job Safety Analyses, and comprehensive hazard mitigation before a single handhole is opened.',
+                  icon: '01',
+                },
+                {
+                  title: 'Asset Protection',
+                  desc: 'Regulated tension monitoring, bend radius compliance, and pressure verification to ensure zero damage to your conduit or fiber.',
+                  icon: '02',
+                },
+                {
+                  title: 'Zero-Incident Culture',
+                  desc: "Safety isn't a checklist — it's our baseline. We protect our crews, your job site, and your production timeline.",
+                  icon: '03',
+                },
+              ].map((item) => (
+                <div key={item.title} className="border-l border-blue-600/30 pl-6">
+                  <span className="font-mono text-xs text-blue-600/50 tracking-widest">[{item.icon}]</span>
+                  <h3 className="font-heading text-lg font-bold text-white mt-3 mb-3">{item.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Coverage Map */}
+        <section className="py-32 bg-[#050505] relative border-t border-white/10">
+          <div className="container mx-auto px-6">
             <div className="mb-12">
-              <span className="font-mono text-blue-600 text-sm uppercase tracking-[0.2em]">[Coverage]</span>
-              <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mt-4 text-white">Where We<br/>Work</h2>
-              <p className="mt-4 text-lg text-gray-400 max-w-2xl">{siteContent?.coverage?.description || "Currently operating in Missouri, Georgia, Tennessee, Alabama, and Florida. Available for mobilization nationwide."}</p>
+              <span className="font-mono text-blue-600 text-sm uppercase tracking-[0.2em]">[Mobilization]</span>
+              <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mt-4 text-white">Nationwide<br/>Mobilization</h2>
+              <p className="mt-2 font-mono text-sm text-blue-600 uppercase tracking-widest">5–10 Business Days</p>
+              <p className="mt-4 text-lg text-gray-400 max-w-2xl">Currently active in the Southeast and Midwest. Available for rapid mobilization to all 50 states.</p>
             </div>
             <div className="max-w-4xl mx-auto">
               <USCoverageMap />

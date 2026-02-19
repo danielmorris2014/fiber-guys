@@ -17,8 +17,8 @@ const DEFAULT_PAST = ["Texas", "Iowa", "Kansas", "Michigan", "Louisiana"];
 type StateStatus = "active" | "past" | "none";
 
 const STATUS_LABEL: Record<StateStatus, string> = {
-  active: "Active",
-  past: "Previous Work",
+  active: "Recent Deployment",
+  past: "Previous Deployment",
   none: "",
 };
 
@@ -231,7 +231,7 @@ export function USCoverageMap({
               style={{ backgroundColor: "rgba(37, 99, 235, 0.35)" }}
             />
             <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">
-              Currently Active
+              Recent Deployments
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -243,7 +243,7 @@ export function USCoverageMap({
               }}
             />
             <span className="font-mono text-[10px] uppercase tracking-widest text-gray-400">
-              Previous Work
+              Previous Deployments
             </span>
           </div>
           <div className="flex items-center gap-2">
