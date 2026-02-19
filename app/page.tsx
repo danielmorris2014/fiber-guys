@@ -100,7 +100,7 @@ const FAQAccordion = ({ items }: { items: FAQItem[] }) => {
         <div key={item.id} className="border-b border-white/10">
           <button
             onClick={() => setOpenId(openId === item.id ? null : item.id)}
-            className="interactable w-full flex items-center justify-between py-6 text-left group"
+            className="interactable w-full flex items-center justify-between py-5 md:py-6 text-left group min-h-[56px]"
             aria-expanded={openId === item.id}
           >
             <span className="font-heading text-xl md:text-2xl font-bold text-white group-hover:text-blue-600 transition-colors pr-8">
@@ -109,7 +109,7 @@ const FAQAccordion = ({ items }: { items: FAQItem[] }) => {
             <motion.span
               animate={{ rotate: openId === item.id ? 45 : 0 }}
               transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-              className="text-blue-600 text-2xl font-light flex-shrink-0 w-8 h-8 flex items-center justify-center"
+              className="text-blue-600 text-2xl font-light flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-sm"
             >
               +
             </motion.span>

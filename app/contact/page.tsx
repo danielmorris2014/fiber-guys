@@ -50,10 +50,10 @@ export default async function ContactPage() {
                 <div>
                   <h2 className="font-heading text-sm font-bold tracking-tight">Email</h2>
                   <a
-                    href="mailto:info@fiberguys.com"
+                    href="mailto:info@fiberguysllc.com"
                     className="text-muted hover:text-orange transition-colors text-sm mt-1 block"
                   >
-                    info@fiberguys.com
+                    info@fiberguysllc.com
                   </a>
                 </div>
               </div>

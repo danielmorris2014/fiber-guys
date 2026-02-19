@@ -7,7 +7,7 @@ This checklist tracks real content that must be provided by the Fiber Guys team 
 ## Contact Information
 
 - [ ] **Real business phone number** — currently omitted from site [PLACEHOLDER]
-- [ ] **Real business email** — currently using info@fiberguys.com (confirm or update)
+- [ ] **Real business email** — currently using info@fiberguysllc.com (confirm or update)
 - [ ] **Real physical address** — currently omitted; decide if address should be displayed
 - [ ] **LinkedIn company page URL** — social links currently hidden
 - [ ] **Instagram profile URL** — social links currently hidden
@@ -47,11 +47,11 @@ This checklist tracks real content that must be provided by the Fiber Guys team 
 - [ ] **Equipment section content** — specific models and fleet details
 - [ ] **Coverage area confirmed** — currently says "nationwide" / continental US
 - [ ] **Mobilization timeline confirmed** — currently says 5-10 business days
-- [ ] **Splice loss target confirmed** — currently says <0.05dB average
+- [ ] **Splice loss target confirmed** — currently says ≤0.03dB
 
 ## Deployment
 
-- [ ] **Custom domain configured** — e.g., fiberguys.com
+- [ ] **Custom domain configured** — fiberguysllc.com
 - [ ] **`NEXT_PUBLIC_SITE_URL` env var set** — sitemap and structured data use this
 - [ ] **Email service API key** — Resend or SendGrid for form submission notifications
 - [ ] **Optional: file storage** — S3/R2 for file uploads from Request form

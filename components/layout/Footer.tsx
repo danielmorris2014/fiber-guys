@@ -57,11 +57,11 @@ export function Footer() {
             </h4>
             <div className="flex flex-col gap-3">
               <a
-                href="mailto:info@fiberguys.com"
+                href="mailto:info@fiberguysllc.com"
                 className="interactable flex items-center gap-2 text-sm text-muted hover:text-orange transition-colors"
               >
                 <Mail className="w-4 h-4" />
-                info@fiberguys.com
+                info@fiberguysllc.com
               </a>
               <p className="text-sm text-muted/60">
                 Crews available for deployment nationwide
@@ -73,7 +73,7 @@ export function Footer() {
         {/* Bottom strip */}
         <div className="mt-12 pt-8 border-t border-line flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-muted/50">
-            &copy; {new Date().getFullYear()} Fiber Guys. All rights reserved.
+            &copy; {new Date().getFullYear()} Fiber Guys LLC. All rights reserved.
           </p>
         </div>
       </div>

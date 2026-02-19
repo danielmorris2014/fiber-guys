@@ -78,7 +78,7 @@ export function Preloader() {
 
       {/* Brand */}
       <div className="absolute bottom-8 font-mono text-[10px] text-muted/40 uppercase tracking-[0.15em]">
-        Fiber Guys Inc.
+        Fiber Guys LLC
       </div>
     </div>
   );

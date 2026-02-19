@@ -66,8 +66,8 @@ export default function RootLayout({
               name: "Fiber Guys",
               description:
                 "Production-focused fiber jetting and precision splicing crews.",
-              url: process.env.NEXT_PUBLIC_SITE_URL || "https://fiberguys.com",
-              email: "info@fiberguys.com",
+              url: process.env.NEXT_PUBLIC_SITE_URL || "https://fiberguysllc.com",
+              email: "info@fiberguysllc.com",
               areaServed: "US",
               serviceType: [
                 "Fiber Optic Cable Jetting",

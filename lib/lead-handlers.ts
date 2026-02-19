@@ -30,7 +30,7 @@ export async function processSubmission(submission: LeadSubmission): Promise<voi
 
   // Email notification (Resend/SendGrid):
   // await sendEmail({
-  //   to: "crew@fiberguys.com",
+  //   to: "crew@fiberguysllc.com",
   //   subject: `New Lead: ${submission.companyName}`,
   //   ...
   // });
