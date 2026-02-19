@@ -11,6 +11,8 @@ import type { FAQItem } from '@/lib/types';
 import Link from 'next/link';
 import { USCoverageMap } from '@/components/ui/USCoverageMap';
 import { IndustryMarquee } from '@/components/home/IndustryMarquee';
+import { TextScramble } from '@/components/ui/TextScramble';
+import { Typewriter } from '@/components/ui/Typewriter';
 
 /**
  * INTERNAL COMPONENTS
@@ -305,8 +307,13 @@ export default function Home() {
                   </div>
 
                   <div className="flex items-center gap-4">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-white/25">
+                      <Typewriter text="System Check" delay={800} speed={50} cursor={false} />
+                    </span>
                     <span className="font-mono text-xs text-white/40">
-                      0{phase + 1} <span className="text-white/20">/</span> 03
+                      <Typewriter text={`0${phase + 1}`} delay={1400} speed={80} cursor={false} />
+                      <span className="text-white/20"> / </span>
+                      <Typewriter text="03" delay={1600} speed={80} />
                     </span>
                     <div className="flex gap-2">
                       {[0, 1, 2].map((i) => (
@@ -325,13 +332,13 @@ export default function Home() {
                   </p>
                   <div className="flex items-center gap-5">
                     <Link href="/request" className="group flex items-center gap-3 px-0 py-2 hover:opacity-80 transition-opacity font-mono text-xs uppercase tracking-widest text-white interactable">
-                      <div className="w-8 h-8 border border-white/20 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-600 transition-colors">
+                      <div className="w-8 h-8 border border-white/20 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-600 transition-colors terminal-glow">
                         <ArrowRight className="w-4 h-4" />
                       </div>
-                      <span className="border-b border-transparent group-hover:border-blue-600 transition-colors">Request a Crew</span>
+                      <TextScramble text="Request a Crew" className="border-b border-transparent group-hover:border-blue-600 transition-colors" />
                     </Link>
                     <Link href="/request?tab=prints" className="group flex items-center gap-3 px-0 py-2 hover:opacity-80 transition-opacity font-mono text-xs uppercase tracking-widest text-white/50 hover:text-white interactable">
-                      <span className="border border-white/20 px-4 py-1.5 group-hover:border-blue-600 group-hover:text-blue-600 transition-colors">Submit Prints</span>
+                      <TextScramble text="Submit Prints" className="border border-white/20 px-4 py-1.5 group-hover:border-blue-600 group-hover:text-blue-600 transition-colors terminal-glow" />
                     </Link>
                   </div>
                 </div>
@@ -387,7 +394,7 @@ export default function Home() {
                   <p className="font-display text-3xl md:text-5xl font-bold text-white mb-1 group-hover:text-blue-600 transition-colors duration-300">
                     {stat.value}<span className="text-lg md:text-xl text-blue-600 ml-1">{stat.unit}</span>
                   </p>
-                  <p className="font-mono text-xs uppercase tracking-widest text-gray-500">{stat.label}</p>
+                  <p className="font-mono text-xs uppercase tracking-widest text-gray-500"><TextScramble text={stat.label} duration={500} /></p>
                 </SpotlightCard>
               ))}
             </div>
@@ -409,7 +416,7 @@ export default function Home() {
                             ))}
                         </ul>
                         <Link href="/services#jetting" className="inline-flex items-center gap-2 mt-8 font-mono text-xs uppercase tracking-widest text-blue-600 hover:text-white transition-colors interactable">
-                          Learn More <ArrowRight className="w-3 h-3" />
+                          <TextScramble text="Learn More" /> <ArrowRight className="w-3 h-3" />
                         </Link>
                     </div>
                 </div>
@@ -428,7 +435,7 @@ export default function Home() {
                             ))}
                         </ul>
                         <Link href="/services#splicing" className="inline-flex items-center gap-2 mt-8 font-mono text-xs uppercase tracking-widest text-blue-600 hover:text-white transition-colors interactable">
-                          Learn More <ArrowRight className="w-3 h-3" />
+                          <TextScramble text="Learn More" /> <ArrowRight className="w-3 h-3" />
                         </Link>
                     </div>
                 </div>
@@ -483,7 +490,7 @@ export default function Home() {
                 ].map((item) => (
                   <SpotlightCard key={item.label} className="border border-white/10 p-5 rounded-sm">
                     <div className="relative z-10">
-                      <h3 className="font-mono text-xs text-blue-600 uppercase tracking-widest mb-2">{item.label}</h3>
+                      <h3 className="font-mono text-xs text-blue-600 uppercase tracking-widest mb-2"><TextScramble text={item.label} duration={400} /></h3>
                       <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
                     </div>
                   </SpotlightCard>
@@ -510,10 +517,56 @@ export default function Home() {
                 <SpotlightCard key={i} className="border border-white/10 p-8 rounded-sm">
                   <div className="relative z-10">
                     <span className="font-mono text-xs text-blue-600 uppercase tracking-widest">{item.tag}</span>
-                    <h3 className="font-heading text-xl font-bold text-white mt-3 mb-4">{item.title}</h3>
+                    <h3 className="font-heading text-xl font-bold text-white mt-3 mb-4"><TextScramble text={item.title} duration={500} /></h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
                   </div>
                 </SpotlightCard>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* The Baseline vs. The Standard */}
+        <section className="py-32 bg-[#0a0a0a] relative border-t border-white/10">
+          <div className="container mx-auto px-6">
+            <div className="mb-16">
+              <span className="font-mono text-blue-600 text-sm uppercase tracking-[0.2em]">[Comparison]</span>
+              <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mt-4 text-white">The Baseline<br/>vs. The Standard</h2>
+              <p className="mt-4 text-lg text-gray-500 max-w-2xl">What you&apos;re used to getting — and what we actually deliver.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-white/10 rounded-sm overflow-hidden">
+              {/* Column headers */}
+              <div className="bg-white/[0.02] px-8 py-4 border-b border-r border-white/10">
+                <span className="font-mono text-xs uppercase tracking-widest text-white/30">Industry Baseline</span>
+              </div>
+              <div className="bg-blue-600/[0.05] px-8 py-4 border-b border-white/10">
+                <span className="font-mono text-xs uppercase tracking-widest text-blue-600">Fiber Guys Standard</span>
+              </div>
+
+              {/* Rows */}
+              {[
+                { baseline: 'Messy Splice Trays', standard: 'Organized & Labeled Trays' },
+                { baseline: 'Delayed Test Results', standard: 'OTDR Data Ready at Handoff' },
+                { baseline: 'Missing As-Builts', standard: 'Clean Closeout Packages' },
+                { baseline: 'Surprised by Scope Changes', standard: 'Pre-Deployment Scope Verification' },
+                { baseline: 'Generic Crew Assignments', standard: 'Task-Matched Equipment & Personnel' },
+                { baseline: 'Unclear Documentation', standard: 'Geo-Tagged Photos & Splice Maps' },
+              ].map((row, i) => (
+                <React.Fragment key={i}>
+                  <div className={`px-8 py-5 border-r border-white/10 flex items-center gap-3 ${i < 5 ? 'border-b border-white/[0.06]' : ''}`}>
+                    <span className="text-red-500/60 font-mono text-sm flex-shrink-0">&#x2717;</span>
+                    <span className="text-white/30 font-mono text-sm line-through decoration-white/10">{row.baseline}</span>
+                  </div>
+                  <div className={`px-8 py-5 bg-blue-600/[0.03] flex items-center gap-3 group ${i < 5 ? 'border-b border-white/[0.06]' : ''}`}>
+                    <span className="text-emerald-500 font-mono text-sm flex-shrink-0">&#x2713;</span>
+                    <TextScramble
+                      text={row.standard}
+                      className="text-emerald-400/90 font-mono text-sm"
+                      duration={500}
+                    />
+                  </div>
+                </React.Fragment>
               ))}
             </div>
           </div>
@@ -598,8 +651,8 @@ export default function Home() {
                       {siteContent?.cta?.description || "Tell us what needs to be placed or spliced. We review your scope and respond with crew availability and a production timeline."}
                     </p>
 
-                    <MagneticButton href="/request" className="inline-flex items-center gap-4 bg-white text-black font-display font-bold uppercase text-xl md:text-2xl py-5 px-8 hover:bg-blue-600 hover:text-white transition-all duration-300 group">
-                      <span>Request a Crew</span>
+                    <MagneticButton href="/request" className="inline-flex items-center gap-4 bg-white text-black font-display font-bold uppercase text-xl md:text-2xl py-5 px-8 hover:bg-blue-600 hover:text-white transition-all duration-300 group terminal-glow">
+                      <TextScramble text="Request a Crew" duration={400} />
                       <ArrowRight className="group-hover:translate-x-2 transition-transform" />
                     </MagneticButton>
                 </div>
