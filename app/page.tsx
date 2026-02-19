@@ -254,11 +254,12 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
         </div>
 
-        <div className="container mx-auto z-10 relative">
+        <div className="container mx-auto z-10 relative min-h-[55vh]">
           <AnimatePresence mode="wait">
             {phase < 3 ? (
               <motion.div
                 key="words-stack"
+                className="min-h-[55vh] flex flex-col justify-center"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -336,7 +337,7 @@ export default function Home() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-                className="flex flex-col items-center justify-center py-8"
+                className="min-h-[55vh] flex flex-col items-center justify-center py-8"
               >
                 <span className="font-display text-[6vw] md:text-[4vw] leading-none font-bold uppercase tracking-tighter text-white/50 mb-4">
                   We Are
