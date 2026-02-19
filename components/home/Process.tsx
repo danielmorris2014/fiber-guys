@@ -9,7 +9,7 @@ const steps = [
     number: "01",
     title: "Scope & Verify",
     description:
-      "Review prints, confirm counts, identify access points, and lock in a production plan before anyone touches the field.",
+      "We review the project scope, verify conduit specs, and confirm we can deliver. Once everything checks out, we move to mobilization.",
   },
   {
     number: "02",

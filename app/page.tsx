@@ -369,8 +369,8 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
               {[
                 { label: 'Fiber Counts', value: '12–864', unit: 'ct' },
-                { label: 'Daily Output', value: 'Up to 25K', unit: 'ft/day' },
-                { label: 'Splice Target', value: '<0.05', unit: 'dB avg' },
+                { label: 'Daily Output', value: 'Up to 25K', unit: 'ft/day/crew' },
+                { label: 'Splice Target', value: '≤0.03', unit: 'dB' },
                 { label: 'Mobilization', value: '5–10', unit: 'days' },
               ].map((stat, i) => (
                 <SpotlightCard key={i} className="border-l border-white/20 pl-6 group p-4 rounded-sm">
@@ -413,7 +413,7 @@ export default function Home() {
                         <h2 className="font-display text-6xl md:text-8xl font-bold uppercase mb-6 leading-none">Precision<br/>Splicing</h2>
                         <p className="font-sans text-gray-300 max-w-sm mb-8 text-lg">Core-alignment fusion splicing. Organized trays, labeled closures, and documentation ready for handoff.</p>
                         <ul className="font-mono text-sm text-gray-400 space-y-2">
-                             {['Mass Fusion (Ribbon) & Single', 'Sub-0.05dB Average Loss Target', 'Organized Trays & Labeled Closures'].map(item => (
+                             {['Mass Fusion (Ribbon) & Single', '≤0.03dB Splice Loss Standard', 'Organized Trays & Labeled Closures'].map(item => (
                                 <li key={item} className="flex items-center"><span className="w-2 h-2 bg-blue-600 mr-2"></span>{item}</li>
                             ))}
                         </ul>
@@ -434,7 +434,7 @@ export default function Home() {
                 </div>
                 <div className="process-track flex flex-row flex-nowrap h-full items-center" style={{ width: '500vw' }}>
                     {[
-                        { step: '01', title: 'Scope & Verify', desc: 'We review prints and walk the route. Conduit continuity is verified and choke points are identified before mobilization.' },
+                        { step: '01', title: 'Scope & Verify', desc: 'We review the project scope, verify conduit specs, and confirm we can deliver. Once everything checks out, we move to mobilization.' },
                         { step: '02', title: 'Mobilize', desc: 'Equipment and experienced crews deployed to site. Compressor pressures calibrated to conduit specifications.' },
                         { step: '03', title: 'Execute', desc: 'Production fiber placement or precision fusion splicing. Tension monitoring, bend radius compliance, and real-time quality checks.' },
                         { step: '04', title: 'Document', desc: 'OTDR testing, splice loss verification, tray photography, and labeled enclosures. Every strand accounted for.' },

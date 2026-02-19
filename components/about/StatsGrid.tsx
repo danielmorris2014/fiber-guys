@@ -7,7 +7,7 @@ const stats = [
   { value: 864, suffix: "ct", label: "Max Fiber Count" },
   { value: 25, suffix: "K ft/day", label: "Jetting Capacity" },
   { value: 5, suffix: "–10 days", label: "Mobilization Window" },
-  { value: 0.05, suffix: "dB", label: "Splice Loss Target", isFloat: true },
+  { value: 0.03, suffix: "dB", label: "Splice Loss Standard", isFloat: true },
 ];
 
 export function StatsGrid() {

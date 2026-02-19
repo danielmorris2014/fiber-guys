@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const capabilities = [
-  "Core-alignment fusion splicing with sub-0.05dB average loss target",
+  "Core-alignment fusion splicing with ≤0.03dB splice loss standard",
   "Mass fusion (ribbon) and individual single-fiber splicing",
   "Fiber counts from 12 to 864 per closure",
   "Clean tray organization with color-coded routing per TIA-598",
