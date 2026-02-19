@@ -1,6 +1,7 @@
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { TooltipProvider } from "@/components/ui/Tooltip";
+import { BaselineComparison } from "@/components/services/BaselineComparison";
 import servicesData from "@/content/services.json";
 import type { ServiceData } from "@/lib/types";
 import type { Metadata } from "next";
@@ -101,6 +102,9 @@ export default function ServicesPage() {
       })}
 
       <TooltipProvider />
+
+      {/* Baseline vs. Standard */}
+      <BaselineComparison />
 
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-6 lg:px-8 py-section-sm lg:py-section text-center">

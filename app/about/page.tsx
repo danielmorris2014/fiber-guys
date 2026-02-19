@@ -1,6 +1,8 @@
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { StatsGrid } from "@/components/about/StatsGrid";
+import { FleetDeployment } from "@/components/about/FleetDeployment";
+import { SafetyGrid } from "@/components/about/SafetyGrid";
 import { ShieldCheck, Truck, Award } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -87,6 +89,12 @@ export default function AboutPage() {
           </ScrollReveal>
         </div>
       </section>
+
+      {/* Tactical Fleet Deployment */}
+      <FleetDeployment />
+
+      {/* Built on Safety & Compliance */}
+      <SafetyGrid />
 
       {/* Values */}
       <section className="bg-bg-2 border-y border-line">

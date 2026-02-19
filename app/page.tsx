@@ -467,39 +467,6 @@ export default function Home() {
             </div>
         </section>
 
-        {/* Tactical Fleet Deployment */}
-        <section className="py-32 bg-[#050505] relative border-b border-white/10">
-          <div className="container mx-auto px-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-              <div>
-                <span className="font-mono text-blue-600 text-sm uppercase tracking-[0.2em]">[Resources]</span>
-                <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mt-4 text-white">Tactical Fleet<br/>Deployment</h2>
-                <p className="mt-6 text-lg text-gray-400 leading-relaxed">
-                  We match the machine to the mission. Instead of throwing blind resources at a project, we engineer our equipment deployment to fit your specific scope, timeline, and budget.
-                </p>
-                <p className="mt-4 text-gray-500 leading-relaxed">
-                  From high-capacity jetters for long-haul runs to agile setups for tight metro builds, we scale our footprint to maximize your project&apos;s efficiency and eliminate unnecessary overhead.
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { label: 'Long-Haul', desc: 'High-capacity jetting rigs for extended conduit runs and interstate corridors.' },
-                  { label: 'Metro / Urban', desc: 'Compact, agile setups for congested duct paths and tight pull boxes.' },
-                  { label: 'High-Count', desc: 'Mass fusion and ribbon splicing rigs for 144–864ct cable builds.' },
-                  { label: 'Emergency', desc: 'Pre-staged restoration kits for same-day mobilization on outage calls.' },
-                ].map((item) => (
-                  <SpotlightCard key={item.label} className="border border-white/10 p-5 rounded-sm">
-                    <div className="relative z-10">
-                      <h3 className="font-mono text-xs text-blue-600 uppercase tracking-widest mb-2"><TextScramble text={item.label} duration={400} /></h3>
-                      <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
-                    </div>
-                  </SpotlightCard>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* What You Get — Deliverables Preview */}
         <section className="py-32 bg-[#050505] relative">
           <div className="container mx-auto px-6">
@@ -521,87 +488,6 @@ export default function Home() {
                     <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
                   </div>
                 </SpotlightCard>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* The Baseline vs. The Standard */}
-        <section className="py-32 bg-[#0a0a0a] relative border-t border-white/10">
-          <div className="container mx-auto px-6">
-            <div className="mb-16">
-              <span className="font-mono text-blue-600 text-sm uppercase tracking-[0.2em]">[Comparison]</span>
-              <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mt-4 text-white">The Baseline<br/>vs. The Standard</h2>
-              <p className="mt-4 text-lg text-gray-500 max-w-2xl">What you&apos;re used to getting — and what we actually deliver.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-white/10 rounded-sm overflow-hidden">
-              {/* Column headers */}
-              <div className="bg-white/[0.02] px-8 py-4 border-b border-r border-white/10">
-                <span className="font-mono text-xs uppercase tracking-widest text-white/30">Industry Baseline</span>
-              </div>
-              <div className="bg-blue-600/[0.05] px-8 py-4 border-b border-white/10">
-                <span className="font-mono text-xs uppercase tracking-widest text-blue-600">Fiber Guys Standard</span>
-              </div>
-
-              {/* Rows */}
-              {[
-                { baseline: 'Messy Splice Trays', standard: 'Organized & Labeled Trays' },
-                { baseline: 'Delayed Test Results', standard: 'OTDR Data Ready at Handoff' },
-                { baseline: 'Missing As-Builts', standard: 'Clean Closeout Packages' },
-                { baseline: 'Surprised by Scope Changes', standard: 'Pre-Deployment Scope Verification' },
-                { baseline: 'Generic Crew Assignments', standard: 'Task-Matched Equipment & Personnel' },
-                { baseline: 'Unclear Documentation', standard: 'Geo-Tagged Photos & Splice Maps' },
-              ].map((row, i) => (
-                <React.Fragment key={i}>
-                  <div className={`px-8 py-5 border-r border-white/10 flex items-center gap-3 ${i < 5 ? 'border-b border-white/[0.06]' : ''}`}>
-                    <span className="text-red-500/60 font-mono text-sm flex-shrink-0">&#x2717;</span>
-                    <span className="text-white/30 font-mono text-sm line-through decoration-white/10">{row.baseline}</span>
-                  </div>
-                  <div className={`px-8 py-5 bg-blue-600/[0.03] flex items-center gap-3 group ${i < 5 ? 'border-b border-white/[0.06]' : ''}`}>
-                    <span className="text-emerald-500 font-mono text-sm flex-shrink-0">&#x2713;</span>
-                    <TextScramble
-                      text={row.standard}
-                      className="text-emerald-400/90 font-mono text-sm"
-                      duration={500}
-                    />
-                  </div>
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Safety & Compliance */}
-        <section className="py-32 bg-[#0a0a0a] relative border-t border-white/10">
-          <div className="container mx-auto px-6">
-            <div className="mb-16">
-              <span className="font-mono text-blue-600 text-sm uppercase tracking-[0.2em]">[Compliance]</span>
-              <h2 className="font-display text-5xl md:text-7xl font-bold uppercase mt-4 text-white">Built on Safety<br/>&amp; Compliance</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                {
-                  title: 'Daily JSAs & OSHA',
-                  desc: 'Strict PPE protocols, daily Job Safety Analyses, and comprehensive hazard mitigation before a single handhole is opened.',
-                  icon: '01',
-                },
-                {
-                  title: 'Asset Protection',
-                  desc: 'Regulated tension monitoring, bend radius compliance, and pressure verification to ensure zero damage to your conduit or fiber.',
-                  icon: '02',
-                },
-                {
-                  title: 'Zero-Incident Culture',
-                  desc: "Safety isn't a checklist — it's our baseline. We protect our crews, your job site, and your production timeline.",
-                  icon: '03',
-                },
-              ].map((item) => (
-                <div key={item.title} className="border-l border-blue-600/30 pl-6">
-                  <span className="font-mono text-xs text-blue-600/50 tracking-widest">[{item.icon}]</span>
-                  <h3 className="font-heading text-lg font-bold text-white mt-3 mb-3">{item.title}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
-                </div>
               ))}
             </div>
           </div>
