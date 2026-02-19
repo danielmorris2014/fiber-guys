@@ -20,16 +20,20 @@ export function useCustomCursor() {
   const isHovering = useRef(false);
   const isTouch = useRef(false);
 
+  const hasMoved = useRef(false);
+
   const animate = useCallback(() => {
     const { dot, ring } = elements.current;
-    if (!dot || !ring) {
+    if (!dot || !ring) return; // Stop loop if elements not ready
+
+    if (!hasMoved.current) {
       rafId.current = requestAnimationFrame(animate);
       return;
     }
 
     // Dot follows directly
-    dotPos.current.x = lerp(dotPos.current.x, mouse.current.x, 1);
-    dotPos.current.y = lerp(dotPos.current.y, mouse.current.y, 1);
+    dotPos.current.x = mouse.current.x;
+    dotPos.current.y = mouse.current.y;
 
     // Ring follows with lag
     ringPos.current.x = lerp(ringPos.current.x, mouse.current.x, 0.15);
@@ -58,6 +62,7 @@ export function useCustomCursor() {
     const onMouseMove = (e: MouseEvent) => {
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
+      hasMoved.current = true;
     };
 
     const onMouseOver = (e: MouseEvent) => {
