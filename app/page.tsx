@@ -10,6 +10,7 @@ import faqData from '@/content/faq.json';
 import type { FAQItem } from '@/lib/types';
 import Link from 'next/link';
 import { USCoverageMap } from '@/components/ui/USCoverageMap';
+import { IndustryMarquee } from '@/components/home/IndustryMarquee';
 
 /**
  * INTERNAL COMPONENTS
@@ -367,6 +368,9 @@ export default function Home() {
             </div>
         </div>
       </header>
+
+      {/* Industry Standards Marquee */}
+      <IndustryMarquee />
 
       <main>
         {/* Capabilities Strip — verifiable specs, not aggregate claims */}
