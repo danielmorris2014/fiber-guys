@@ -57,7 +57,7 @@ function ProjectRow({
         >
           <Image
             src={mainItem.src}
-            alt={mainItem.title}
+            alt={`${mainItem.title} — ${mainItem.description}`}
             fill
             className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
             sizes="(max-width: 1024px) 100vw, 66vw"
@@ -87,7 +87,7 @@ function ProjectRow({
           >
             <Image
               src={sideItem.src}
-              alt={sideItem.title}
+              alt={`${sideItem.title} — ${sideItem.description}`}
               fill
               className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
               sizes="(max-width: 1024px) 100vw, 33vw"

@@ -44,7 +44,7 @@ export function GalleryGrid({ items, onSelect }: GalleryGridProps) {
             >
               <Image
                 src={item.src}
-                alt={item.title}
+                alt={item.altText || `${item.title} — ${item.description}`}
                 width={width}
                 height={height}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

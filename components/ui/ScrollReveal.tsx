@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
@@ -29,12 +30,27 @@ export function ScrollReveal({
 }: ScrollRevealProps) {
   const reduced = useReducedMotion();
   const offset = directionMap[direction];
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // On the server and first client render, render without motion styles to avoid
+  // hydration mismatch. Once mounted, motion takes over and animates in.
+  if (!mounted || reduced) {
+    return (
+      <div className={className}>
+        {children}
+      </div>
+    );
+  }
 
   return (
     <motion.div
       className={className}
-      initial={!reduced ? { opacity: 0, x: offset.x, y: offset.y } : undefined}
-      whileInView={!reduced ? { opacity: 1, x: 0, y: 0 } : undefined}
+      initial={{ opacity: 0, x: offset.x, y: offset.y }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once, margin: "-100px" }}
       transition={{
         duration,

@@ -144,16 +144,6 @@
     }
   }
 
-  @keyframes marquee {
-    0% {
-      transform: translateX(0);
-    }
-
-    100% {
-      transform: translateX(-50%);
-    }
-  }
-
   @keyframes flicker {
     0%, 100% { opacity: 1; }
     4% { opacity: 0.9; }
@@ -346,11 +336,23 @@ body {
   100% { transform: translateY(100%); }
 }
 
+/* Marquee keyframes — outside @theme so they aren't tree-shaken */
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
 /* Client marquee */
 .marquee-track {
   display: flex;
   width: max-content;
   animation: marquee 25s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .marquee-content {

@@ -1,4 +1,4 @@
-export type GalleryCategory = "jetting" | "splicing" | "crew" | "equipment" | "closeout";
+export type GalleryCategory = "jetting" | "splicing" | "crew" | "equipment" | "closeout" | "setup";
 
 export interface GalleryItem {
   id: string;
@@ -8,6 +8,7 @@ export interface GalleryItem {
   description: string;
   src: string;
   blurDataURL: string;
+  altText?: string;
 }
 
 export interface ServiceData {

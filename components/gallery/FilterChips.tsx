@@ -18,6 +18,7 @@ const filters: { value: FilterOption; label: string }[] = [
   { value: "crew", label: "Crew" },
   { value: "equipment", label: "Equipment" },
   { value: "closeout", label: "Closeout" },
+  { value: "setup", label: "Setup" },
 ];
 
 export function FilterChips({ active, onChange }: FilterChipsProps) {

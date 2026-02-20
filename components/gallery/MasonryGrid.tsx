@@ -36,7 +36,7 @@ export function MasonryGrid({ items, onSelect }: MasonryGridProps) {
               <div className="relative aspect-[4/3] overflow-hidden">
                 <Image
                   src={item.src}
-                  alt={item.title}
+                  alt={`${item.title} — ${item.description}`}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                   className="object-cover transition-all duration-700 grayscale group-hover:grayscale-0 group-hover:scale-105"

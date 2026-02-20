@@ -1,93 +1,78 @@
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { Camera } from "lucide-react";
+import { FieldGallery } from "@/components/gallery/FieldGallery";
+import { getGalleryImages } from "@/lib/sanity.queries";
 import type { Metadata } from "next";
-import { existsSync } from "fs";
-import { join } from "path";
-import galleryData from "@/content/gallery.json";
-import type { GalleryItem } from "@/lib/types";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Gallery",
   description:
-    "See our fiber jetting and splicing work. Clean trays, production runs, and field-ready documentation from projects across the US.",
+    "Field execution proof — precision splicing, production jetting, and audit-ready closeout documentation from Fiber Guys projects nationwide.",
 };
 
-function hasRealImages(): boolean {
-  // Check if at least one gallery image actually exists
-  try {
-    const publicDir = join(process.cwd(), "public");
-    return galleryData.some((item) =>
-      existsSync(join(publicDir, item.src))
-    );
-  } catch {
-    return false;
-  }
-}
+export default async function GalleryPage() {
+  const sanityImages = await getGalleryImages();
 
-export default function GalleryPage() {
-  const items = galleryData as GalleryItem[];
-  const imagesExist = hasRealImages();
+  /* Map Sanity images to the shape FieldGallery expects */
+  const cmsImages =
+    sanityImages.length > 0
+      ? sanityImages.map((img) => ({
+          id: img._id,
+          title: img.title,
+          category: img.category,
+          location: img.location ?? "",
+          description: img.description ?? "",
+          tag: img.title,
+          imageUrl: img.imageUrl,
+          lqip: img.lqip ?? undefined,
+          altText: img.altText ?? undefined,
+        }))
+      : undefined; // undefined → use hardcoded fallback
 
   return (
     <main id="main-content" className="pt-20 lg:pt-24">
-      <section className="mx-auto max-w-7xl px-6 lg:px-8 py-section-sm lg:py-section">
+      {/* Header */}
+      <section className="mx-auto max-w-7xl px-6 lg:px-8 pt-section-sm lg:pt-section pb-12">
         <ScrollReveal>
-          <p className="caption-lg text-orange mb-4">Our Work</p>
-          <h1 className="font-heading text-h1 lg:text-display font-bold tracking-tighter">
-            Built to show,{" "}
-            <span className="text-muted">not just tell.</span>
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-orange mb-4">
+            [Field Work]
+          </p>
+          <h1 className="font-heading text-h1 lg:text-display font-bold tracking-tighter max-w-3xl">
+            Field Execution
           </h1>
           <p className="mt-4 text-lg text-muted max-w-2xl">
-            Every photo represents real production work — real conduit, real
-            splices, real closeout packages.
+            Proof of production. Clean setups, organized trays, and the iron
+            that gets it done.
           </p>
         </ScrollReveal>
+      </section>
 
-        <div className="mt-12 lg:mt-16">
-          {imagesExist ? (
-            <GalleryClientWrapper items={items} />
-          ) : (
-            <GalleryComingSoon />
-          )}
+      {/* Gallery */}
+      <section className="mx-auto max-w-7xl px-6 lg:px-8 pb-section-sm lg:pb-section">
+        <FieldGallery cmsImages={cmsImages} />
+      </section>
+
+      {/* CTA */}
+      <section className="border-t border-line">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 py-section-sm lg:py-section text-center">
+          <ScrollReveal>
+            <h2 className="font-heading text-h2 lg:text-h1 font-bold tracking-tighter">
+              See it in person.
+            </h2>
+            <p className="mt-4 text-lg text-muted max-w-lg mx-auto">
+              Send us your prints and we&apos;ll show you what our crews can
+              do on your project.
+            </p>
+            <div className="mt-8">
+              <MagneticButton href="/request" size="large">
+                Request a Crew
+              </MagneticButton>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
     </main>
-  );
-}
-
-async function GalleryClientWrapper({ items }: { items: GalleryItem[] }) {
-  const { GalleryClient } = await import("@/components/gallery/GalleryClient");
-  const { CompareSection } = await import("@/components/gallery/CompareSection");
-
-  return (
-    <>
-      <GalleryClient items={items} />
-      <CompareSection />
-    </>
-  );
-}
-
-function GalleryComingSoon() {
-  return (
-    <ScrollReveal>
-      <div className="border border-line rounded-2xl bg-bg-2 p-12 lg:p-20 text-center">
-        <div className="flex justify-center mb-6">
-          <div className="p-4 rounded-full bg-orange-soft">
-            <Camera className="w-10 h-10 text-orange" />
-          </div>
-        </div>
-        <h2 className="font-heading text-h3 font-bold tracking-tight mb-4">
-          Gallery coming soon.
-        </h2>
-        <p className="text-muted max-w-md mx-auto mb-8">
-          We&apos;re compiling project photos from the field. Check back soon for
-          real documentation of our jetting and splicing work.
-        </p>
-        <MagneticButton href="/request">
-          Request a Crew
-        </MagneticButton>
-      </div>
-    </ScrollReveal>
   );
 }

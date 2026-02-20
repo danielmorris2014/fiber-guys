@@ -6,6 +6,7 @@ const footerLinks = [
   { href: "/services", label: "Services" },
   { href: "/gallery", label: "Field Work" },
   { href: "/about", label: "About" },
+  { href: "/careers", label: "Careers" },
   { href: "/contact", label: "Contact" },
   { href: "/request", label: "Request Crew" },
 ];
@@ -20,7 +21,7 @@ export function Footer() {
             <Link href="/" className="interactable inline-block">
               <Image
                 src="/brand/logo.png"
-                alt="Fiber Guys"
+                alt="Fiber Guys LLC logo — nationwide fiber optic construction"
                 width={140}
                 height={50}
                 className="h-10 w-auto"

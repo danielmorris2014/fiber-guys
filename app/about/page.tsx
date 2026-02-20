@@ -96,6 +96,84 @@ export default function AboutPage() {
       {/* Built on Safety & Compliance */}
       <SafetyGrid />
 
+      {/* Leadership & Experience */}
+      <section className="mx-auto max-w-7xl px-6 lg:px-8 py-section-sm lg:py-section">
+        <ScrollReveal>
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-orange mb-4">
+            [Leadership &amp; Experience]
+          </p>
+          <h2 className="font-heading text-h2 lg:text-h1 font-bold tracking-tighter max-w-3xl">
+            Built by people who&apos;ve{" "}
+            <span className="text-muted">done the work.</span>
+          </h2>
+        </ScrollReveal>
+
+        <div className="mt-12 lg:mt-16 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          <ScrollReveal>
+            <div className="border border-line rounded-sm bg-bg-2 p-8 lg:p-10 h-full">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange/60">
+                01 — Management
+              </span>
+              <h3 className="font-heading text-h3 font-bold tracking-tight mt-4 mb-6">
+                Managed by OSP Veterans
+              </h3>
+              <p className="text-muted leading-relaxed">
+                Fiber Guys isn&apos;t run from behind a desk — it&apos;s run by
+                industry veterans with deep backgrounds in Outside Plant (OSP)
+                builds, dedicated Quality Control, and large-scale Project
+                Management. We understand the prime contractor&apos;s exact pain
+                points because we&apos;ve managed those same builds. From
+                navigating complex conduit paths to delivering flawless closeout
+                packages, our leadership ensures every project meets the highest
+                standard of execution before the handoff.
+              </p>
+              <div className="mt-8 pt-6 border-t border-line">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 border border-orange/30 bg-orange-soft flex items-center justify-center rounded-sm">
+                    <span className="font-mono text-xs font-bold text-orange">OSP</span>
+                  </div>
+                  <div>
+                    <p className="font-mono text-xs text-text font-medium">Outside Plant Leadership</p>
+                    <p className="font-mono text-[10px] text-muted uppercase tracking-widest mt-0.5">QC &bull; PM &bull; Field Oversight</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal delay={0.15}>
+            <div className="border border-line rounded-sm bg-bg-2 p-8 lg:p-10 h-full">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-orange/60">
+                02 — Field Execution
+              </span>
+              <h3 className="font-heading text-h3 font-bold tracking-tight mt-4 mb-6">
+                20+ Years on the Iron
+              </h3>
+              <p className="text-muted leading-relaxed">
+                Management only goes so far without the right hands in the field.
+                Our jetting and splicing crews bring over two decades of
+                specialized, hands-on experience to the job site. We know how to
+                push limits on daily footage without compromising the integrity
+                of the fiber or the conduit system. When our machines spool up,
+                you get production-grade output backed by decades of proven field
+                expertise.
+              </p>
+              <div className="mt-8 pt-6 border-t border-line">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 border border-orange/30 bg-orange-soft flex items-center justify-center rounded-sm">
+                    <span className="font-mono text-xs font-bold text-orange">20+</span>
+                  </div>
+                  <div>
+                    <p className="font-mono text-xs text-text font-medium">Years of Field Experience</p>
+                    <p className="font-mono text-[10px] text-muted uppercase tracking-widest mt-0.5">Jetting &bull; Splicing &bull; Production</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
       {/* Values */}
       <section className="bg-bg-2 border-y border-line">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 py-section-sm lg:py-section">

@@ -12,12 +12,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/request",
     "/about",
     "/contact",
+    "/careers",
   ];
 
   return routes.map((route) => ({
     url: `${BASE_URL}${route}`,
     lastModified: new Date(),
-    changeFrequency: route === "" ? "weekly" : "monthly",
-    priority: route === "" ? 1.0 : route === "/request" ? 0.9 : 0.8,
+    changeFrequency: "monthly" as const,
+    priority: route === "" ? 1.0 : 0.8,
   }));
 }

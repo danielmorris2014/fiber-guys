@@ -9,7 +9,19 @@ import { motion, AnimatePresence } from 'motion/react';
 import faqData from '@/content/faq.json';
 import type { FAQItem } from '@/lib/types';
 import Link from 'next/link';
-import { USCoverageMap } from '@/components/ui/USCoverageMap';
+import dynamic from 'next/dynamic';
+
+const USCoverageMap = dynamic(
+  () => import('@/components/ui/USCoverageMap').then((mod) => mod.USCoverageMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full aspect-[4/3] bg-white/[0.02] border border-white/10 rounded-sm flex items-center justify-center">
+        <span className="font-mono text-xs text-white/30 uppercase tracking-widest">Loading map...</span>
+      </div>
+    ),
+  }
+);
 import { IndustryMarquee } from '@/components/home/IndustryMarquee';
 import { TextScramble } from '@/components/ui/TextScramble';
 import { Typewriter } from '@/components/ui/Typewriter';
@@ -199,17 +211,20 @@ export default function Home() {
     });
 
     if (horizontalSectionRef.current) {
-      gsap.to(".process-track", {
-        x: () => -(4 * window.innerWidth),
-        ease: "none",
-        scrollTrigger: {
-          trigger: horizontalSectionRef.current,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 1,
-          invalidateOnRefresh: true,
-        }
-      });
+      const track = horizontalSectionRef.current.querySelector(".process-track") as HTMLElement;
+      if (track) {
+        gsap.to(track, {
+          x: () => -(track.scrollWidth - window.innerWidth),
+          ease: "none",
+          scrollTrigger: {
+            trigger: horizontalSectionRef.current,
+            pin: true,
+            scrub: true,
+            end: () => `+=${track.scrollWidth - window.innerWidth}`,
+            invalidateOnRefresh: true,
+          }
+        });
+      }
     }
 
     gsap.from(".faq-section", {
@@ -257,12 +272,12 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
         </div>
 
-        <div className="container mx-auto z-10 relative min-h-[55vh]">
+        <div className="container mx-auto z-10 relative h-[70vh] min-h-[500px]">
           <AnimatePresence mode="wait">
             {phase < 3 ? (
               <motion.div
                 key="words-stack"
-                className="min-h-[55vh] flex flex-col justify-center"
+                className="absolute inset-0 flex flex-col justify-center"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -274,21 +289,27 @@ export default function Home() {
 
                 <div className="flex flex-col mt-2">
                   {heroWords.map((item, i) => (
-                    i <= phase && (
-                      <motion.span
-                        key={item.word}
-                        initial={{ clipPath: 'inset(0 100% 0 0)', opacity: 0 }}
-                        animate={{ clipPath: 'inset(0 0% 0 0)', opacity: 1 }}
-                        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-                        className={`font-display text-[12vw] md:text-[8vw] leading-[0.9] font-bold uppercase tracking-tighter transition-colors duration-500 ${i === phase ? 'text-white' : 'text-white/30'}`}
-                      >
-                        {item.word}
-                      </motion.span>
-                    )
+                    <motion.span
+                      key={item.word}
+                      initial={false}
+                      animate={{
+                        clipPath: i <= phase ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)',
+                        opacity: i <= phase ? 1 : 0,
+                      }}
+                      transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+                      className={`font-display text-[12vw] md:text-[8vw] leading-[0.9] font-bold uppercase tracking-tighter transition-colors duration-500 ${i <= phase ? (i === phase ? 'text-white' : 'text-white/30') : 'text-white/0'}`}
+                    >
+                      {item.word}
+                    </motion.span>
                   ))}
                 </div>
 
-                <div className="h-[2px] bg-blue-600 w-full mt-4 shadow-[0_0_15px_rgba(37,99,235,0.8)]"></div>
+                <motion.div
+                  className="h-[2px] bg-blue-600 w-full mt-4 shadow-[0_0_20px_rgba(37,99,235,0.9),0_0_60px_rgba(37,99,235,0.4)]"
+                  initial={{ scaleX: 0, transformOrigin: 'left' }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+                />
 
                 <div className="mt-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                   <div className="relative h-6 overflow-hidden">
@@ -350,14 +371,15 @@ export default function Home() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-                className="min-h-[55vh] flex flex-col items-center justify-center py-8"
+                className="absolute inset-0 flex flex-col items-center justify-center"
               >
                 <span className="font-display text-[6vw] md:text-[4vw] leading-none font-bold uppercase tracking-tighter text-white/50 mb-4">
                   We Are
                 </span>
                 <motion.img
                   src="/brand/logo.png"
-                  alt="Fiber Guys"
+                  alt="Fiber Guys LLC — Nationwide fiber optic jetting and precision splicing contractor"
+                  fetchPriority="high"
                   initial={{ scale: 0.7, opacity: 0, y: 20 }}
                   animate={{ scale: 1, opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
@@ -443,27 +465,25 @@ export default function Home() {
         </section>
 
         {/* Process (Horizontal Scroll) */}
-        <section id="process" ref={horizontalSectionRef} className="relative bg-blue-600" style={{ height: '300vh' }}>
-            <div className="sticky top-0 h-screen w-full overflow-hidden">
-                <div className="absolute top-12 left-12 z-20">
-                    <h2 className="font-display text-4xl uppercase font-bold text-white">The Protocol</h2>
-                    <p className="font-mono text-sm mt-2 opacity-80 text-white">Methodology // Execution</p>
-                </div>
-                <div className="process-track flex flex-row flex-nowrap h-full items-center" style={{ width: '500vw' }}>
-                    {[
-                        { step: '01', title: 'Scope & Verify', desc: 'We review the project scope, verify conduit specs, and confirm we can deliver. Once everything checks out, we move to mobilization.' },
-                        { step: '02', title: 'Mobilize', desc: 'Equipment and experienced crews deployed to site. Compressor pressures calibrated to conduit specifications.' },
-                        { step: '03', title: 'Execute', desc: 'Production fiber placement or precision fusion splicing. Tension monitoring, bend radius compliance, and real-time quality checks.' },
-                        { step: '04', title: 'Document', desc: 'OTDR testing, splice loss verification, tray photography, and labeled enclosures. Every strand accounted for.' },
-                        { step: '05', title: 'Handoff', desc: 'Clean site, organized closures, and a documentation package ready for client review or closeout submission.' }
-                    ].map((p, i) => (
-                        <div key={i} className="w-screen flex-shrink-0 px-12 flex flex-col justify-center h-full border-r border-white/20 last:border-r-0 text-white">
-                            <span className="font-display text-[20vh] md:text-[30vh] opacity-20 font-bold mb-4 text-black leading-none">{p.step}</span>
-                            <h3 className="font-display text-5xl md:text-7xl font-bold uppercase mb-6">{p.title}</h3>
-                            <p className="font-sans text-xl md:text-2xl max-w-xl leading-relaxed">{p.desc}</p>
-                        </div>
-                    ))}
-                </div>
+        <section id="process" ref={horizontalSectionRef} className="relative bg-blue-600 h-screen overflow-hidden">
+            <div className="absolute top-12 left-12 z-20">
+                <h2 className="font-display text-4xl uppercase font-bold text-white">The Protocol</h2>
+                <p className="font-mono text-sm mt-2 opacity-80 text-white">Methodology // Execution</p>
+            </div>
+            <div className="process-track flex flex-row flex-nowrap h-full items-center" style={{ width: '500vw' }}>
+                {[
+                    { step: '01', title: 'Scope & Verify', desc: 'We review the project scope, verify conduit specs, and confirm we can deliver. Once everything checks out, we move to mobilization.' },
+                    { step: '02', title: 'Mobilize', desc: 'Equipment and experienced crews deployed to site. Compressor pressures calibrated to conduit specifications.' },
+                    { step: '03', title: 'Execute', desc: 'Production fiber placement or precision fusion splicing. Tension monitoring, bend radius compliance, and real-time quality checks.' },
+                    { step: '04', title: 'Document', desc: 'OTDR testing, splice loss verification, tray photography, and labeled enclosures. Every strand accounted for.' },
+                    { step: '05', title: 'Handoff', desc: 'Clean site, organized closures, and a documentation package ready for client review or closeout submission.' }
+                ].map((p, i) => (
+                    <div key={i} className="w-screen flex-shrink-0 px-12 flex flex-col justify-center h-full border-r border-white/20 last:border-r-0 text-white">
+                        <span className="font-display text-[20vh] md:text-[30vh] opacity-20 font-bold mb-4 text-black leading-none">{p.step}</span>
+                        <h3 className="font-display text-5xl md:text-7xl font-bold uppercase mb-6">{p.title}</h3>
+                        <p className="font-sans text-xl md:text-2xl max-w-xl leading-relaxed">{p.desc}</p>
+                    </div>
+                ))}
             </div>
         </section>
 
@@ -518,6 +538,27 @@ export default function Home() {
             <div className="max-w-3xl">
               <FAQAccordion items={faqData as FAQItem[]} />
             </div>
+          </div>
+        </section>
+
+        {/* Hiring Strip */}
+        <section className="border-t border-white/10 bg-[#050505]">
+          <div className="container mx-auto px-6">
+            <Link
+              href="/careers"
+              className="interactable flex items-center justify-between py-5 group"
+            >
+              <div className="flex items-center gap-4">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                </span>
+                <span className="font-mono text-xs uppercase tracking-[0.12em] text-white/50 group-hover:text-white transition-colors">
+                  Now Hiring — Jetting Operators &amp; Precision Splicers
+                </span>
+              </div>
+              <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white group-hover:translate-x-1 transition-all" />
+            </Link>
           </div>
         </section>
 

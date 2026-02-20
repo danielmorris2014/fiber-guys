@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     else if (!validateEmail(email)) errors.email = "Please enter a valid email";
     if (!phone) errors.phone = "Phone number is required";
     if (!cityState) errors.cityState = "City / State is required";
-    if (!serviceNeeded || !["jetting", "splicing", "both"].includes(serviceNeeded)) {
+    if (!serviceNeeded || !["jetting", "splicing", "both", "emergency"].includes(serviceNeeded)) {
       errors.serviceNeeded = "Please select a service";
     }
 

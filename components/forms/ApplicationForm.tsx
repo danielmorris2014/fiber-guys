@@ -1,13 +1,14 @@
 "use client";
 
-import { useReducer, useCallback, useRef, useState } from "react";
+import { useReducer, useCallback, useRef, useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { FileUpload } from "./FileUpload";
 import { Spinner } from "@/components/ui/Spinner";
-import { submitLead } from "@/actions/submitLead";
-import type { SubmitLeadResult } from "@/actions/submitLead";
+import { submitApplication } from "@/actions/submitApplication";
+import type { SubmitApplicationResult } from "@/actions/submitApplication";
 import { CheckCircle2 } from "lucide-react";
 import { Turnstile } from "@/components/ui/Turnstile";
+import { FileUpload } from "@/components/forms/FileUpload";
 
 // ---------------------------------------------------------------------------
 // State
@@ -16,16 +17,14 @@ interface FormState {
   values: {
     firstName: string;
     lastName: string;
-    companyName: string;
     phone: string;
     email: string;
-    projectType: string;
-    estimatedFootage: string;
-    targetDate: string;
-    notes: string;
-    website: string; // honeypot
+    position: string;
+    yearsExperience: string;
+    hasCDL: string;
+    equipmentExperience: string;
+    website: string;
   };
-  files: File[];
   touched: Record<string, boolean>;
   errors: Record<string, string>;
   submitting: boolean;
@@ -35,7 +34,6 @@ interface FormState {
 
 type Action =
   | { type: "SET_FIELD"; field: string; value: string }
-  | { type: "SET_FILES"; files: File[] }
   | { type: "TOUCH_FIELD"; field: string }
   | { type: "SET_ERRORS"; errors: Record<string, string> }
   | { type: "CLEAR_ERROR"; field: string }
@@ -48,16 +46,14 @@ const initialState: FormState = {
   values: {
     firstName: "",
     lastName: "",
-    companyName: "",
     phone: "",
     email: "",
-    projectType: "",
-    estimatedFootage: "",
-    targetDate: "",
-    notes: "",
+    position: "",
+    yearsExperience: "",
+    hasCDL: "",
+    equipmentExperience: "",
     website: "",
   },
-  files: [],
   touched: {},
   errors: {},
   submitting: false,
@@ -68,17 +64,9 @@ const initialState: FormState = {
 function reducer(state: FormState, action: Action): FormState {
   switch (action.type) {
     case "SET_FIELD":
-      return {
-        ...state,
-        values: { ...state.values, [action.field]: action.value },
-      };
-    case "SET_FILES":
-      return { ...state, files: action.files };
+      return { ...state, values: { ...state.values, [action.field]: action.value } };
     case "TOUCH_FIELD":
-      return {
-        ...state,
-        touched: { ...state.touched, [action.field]: true },
-      };
+      return { ...state, touched: { ...state.touched, [action.field]: true } };
     case "SET_ERRORS":
       return { ...state, errors: { ...state.errors, ...action.errors } };
     case "CLEAR_ERROR": {
@@ -108,17 +96,18 @@ function validateField(field: string, value: string): string | null {
       return value.trim() ? null : "First name is required";
     case "lastName":
       return value.trim() ? null : "Last name is required";
-    case "companyName":
-      return value.trim() ? null : "Company name is required";
     case "phone":
       return value.trim() ? null : "Phone number is required";
     case "email":
       if (!value.trim()) return "Email is required";
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
-        return "Enter a valid email";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Enter a valid email";
       return null;
-    case "projectType":
-      return value ? null : "Select a project type";
+    case "position":
+      return value ? null : "Select a position";
+    case "yearsExperience":
+      return value.trim() ? null : "Years of experience is required";
+    case "hasCDL":
+      return value ? null : "CDL status is required";
     default:
       return null;
   }
@@ -127,14 +116,15 @@ function validateField(field: string, value: string): string | null {
 const REQUIRED_FIELDS = [
   "firstName",
   "lastName",
-  "companyName",
   "phone",
   "email",
-  "projectType",
+  "position",
+  "yearsExperience",
+  "hasCDL",
 ];
 
 // ---------------------------------------------------------------------------
-// Shared input styles
+// Styles
 // ---------------------------------------------------------------------------
 const INPUT_BASE =
   "w-full bg-transparent border-b border-white/[0.12] px-0 py-3 text-sm text-white placeholder:text-white/20 transition-all duration-300 focus:outline-none focus:border-blue-600 focus:shadow-[0_1px_0_0_#2563EB]";
@@ -144,7 +134,7 @@ const LABEL_BASE =
   "block font-mono text-[10px] uppercase tracking-[0.15em] text-white/40 mb-2";
 
 // ---------------------------------------------------------------------------
-// Form Field Components
+// Field
 // ---------------------------------------------------------------------------
 function Field({
   label,
@@ -189,11 +179,7 @@ function Field({
         aria-describedby={showError ? `${name}-error` : undefined}
       />
       {showError && (
-        <p
-          id={`${name}-error`}
-          className="mt-1.5 font-mono text-[10px] text-red-400"
-          role="alert"
-        >
+        <p id={`${name}-error`} className="mt-1.5 font-mono text-[10px] text-red-400" role="alert">
           {error}
         </p>
       )}
@@ -202,7 +188,7 @@ function Field({
 }
 
 // ---------------------------------------------------------------------------
-// Success State
+// Success
 // ---------------------------------------------------------------------------
 function SuccessState({ onReset }: { onReset: () => void }) {
   return (
@@ -210,36 +196,66 @@ function SuccessState({ onReset }: { onReset: () => void }) {
       <div className="w-16 h-16 rounded-full bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center mb-6">
         <CheckCircle2 className="w-8 h-8 text-emerald-400" />
       </div>
-
       <h3 className="font-heading text-2xl font-bold text-white mb-2">
-        Project Specs Received
+        Application Received
       </h3>
       <p className="font-mono text-sm text-white/50 max-w-md mb-2">
-        Our management team will review the parameters and respond with crew
-        availability and production timelines.
+        If your experience matches our current needs, dispatch will reach out.
       </p>
       <p className="font-mono text-xs text-white/30 mb-8">
-        Typical response time: within 1 business day
+        We review applications on a rolling basis
       </p>
-
       <button
         type="button"
         onClick={onReset}
         className="font-mono text-xs uppercase tracking-[0.15em] text-blue-400 hover:text-blue-300 transition-colors interactable"
       >
-        [ Submit Another Request ]
+        [ Submit Another Application ]
       </button>
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Main Export
+// Main
 // ---------------------------------------------------------------------------
-export function RequestForm() {
+const VALID_ROLES = ["jetting-operator", "precision-splicer", "osp-laborer"];
+
+const RESUME_ACCEPT: Record<string, string[]> = {
+  "application/pdf": [".pdf"],
+  "application/msword": [".doc"],
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+};
+
+export function ApplicationForm() {
+  const searchParams = useSearchParams();
   const [state, dispatch] = useReducer(reducer, initialState);
   const formRef = useRef<HTMLFormElement>(null);
-  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [resumeFiles, setResumeFiles] = useState<File[]>([]);
+  const initialRoleApplied = useRef(false);
+
+  // Pre-select position from ?role= URL param
+  useEffect(() => {
+    if (initialRoleApplied.current) return;
+    const role = searchParams.get("role");
+    if (role && VALID_ROLES.includes(role)) {
+      dispatch({ type: "SET_FIELD", field: "position", value: role });
+      initialRoleApplied.current = true;
+    }
+  }, [searchParams]);
+
+  // Listen for role-selected custom event (from "Apply Now" buttons)
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const role = (e as CustomEvent).detail;
+      if (role && VALID_ROLES.includes(role)) {
+        dispatch({ type: "SET_FIELD", field: "position", value: role });
+      }
+    };
+    window.addEventListener("role-selected", handler);
+    return () => window.removeEventListener("role-selected", handler);
+  }, []);
 
   const handleChange = useCallback((field: string, value: string) => {
     dispatch({ type: "SET_FIELD", field, value });
@@ -250,12 +266,9 @@ export function RequestForm() {
   const handleBlur = useCallback(
     (field: string) => {
       dispatch({ type: "TOUCH_FIELD", field });
-      const value =
-        state.values[field as keyof typeof state.values] || "";
+      const value = state.values[field as keyof typeof state.values] || "";
       const error = validateField(field, value);
-      if (error) {
-        dispatch({ type: "SET_ERRORS", errors: { [field]: error } });
-      }
+      if (error) dispatch({ type: "SET_ERRORS", errors: { [field]: error } });
     },
     [state.values]
   );
@@ -263,13 +276,9 @@ export function RequestForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate all required fields client-side first
     const errors: Record<string, string> = {};
     for (const field of REQUIRED_FIELDS) {
-      const error = validateField(
-        field,
-        state.values[field as keyof typeof state.values]
-      );
+      const error = validateField(field, state.values[field as keyof typeof state.values]);
       if (error) errors[field] = error;
       dispatch({ type: "TOUCH_FIELD", field });
     }
@@ -284,40 +293,22 @@ export function RequestForm() {
     dispatch({ type: "SUBMIT_START" });
 
     try {
-      // Build FormData for the server action
       const formData = new FormData();
-      formData.append("firstName", state.values.firstName);
-      formData.append("lastName", state.values.lastName);
-      formData.append("companyName", state.values.companyName);
-      formData.append("email", state.values.email);
-      formData.append("phone", state.values.phone);
-      formData.append("projectType", state.values.projectType);
-      formData.append("estimatedFootage", state.values.estimatedFootage);
-      formData.append("targetDate", state.values.targetDate);
-      formData.append("notes", state.values.notes);
-      formData.append("website", state.values.website); // honeypot
-
-      if (turnstileToken) {
-        formData.append("cf-turnstile-response", turnstileToken);
+      Object.entries(state.values).forEach(([k, v]) => formData.append(k, v));
+      if (resumeFiles.length > 0) {
+        formData.append("resume", resumeFiles[0]);
       }
+      if (turnstileToken) formData.append("cf-turnstile-response", turnstileToken);
 
-      for (const file of state.files) {
-        formData.append("files", file);
-      }
-
-      // Call the server action directly
-      const result: SubmitLeadResult = await submitLead(formData);
+      const result: SubmitApplicationResult = await submitApplication(formData);
 
       if (!result.success) {
-        // Apply server-side field errors if present
         if (result.fieldErrors) {
           dispatch({ type: "SET_ERRORS", errors: result.fieldErrors });
-          // Touch all fields with errors so they display
           for (const field of Object.keys(result.fieldErrors)) {
             dispatch({ type: "TOUCH_FIELD", field });
           }
         }
-
         const msg = result.error || "Something went wrong. Please try again.";
         dispatch({ type: "SUBMIT_ERROR", error: msg });
         toast.error("Submission failed", { description: msg });
@@ -325,8 +316,8 @@ export function RequestForm() {
       }
 
       dispatch({ type: "SUBMIT_SUCCESS" });
-      toast.success("Request submitted", {
-        description: "We'll review your specs and be in touch shortly.",
+      toast.success("Application submitted", {
+        description: "We'll review your experience and be in touch.",
       });
     } catch {
       const msg = "Network error. Please check your connection and try again.";
@@ -335,23 +326,17 @@ export function RequestForm() {
     }
   };
 
-  // Show success state after submission
   if (state.submitted) {
-    return <SuccessState onReset={() => dispatch({ type: "RESET" })} />;
+    return <SuccessState onReset={() => { dispatch({ type: "RESET" }); setResumeFiles([]); }} />;
   }
 
   return (
-    <form
-      ref={formRef}
-      onSubmit={handleSubmit}
-      noValidate
-      className="space-y-10"
-    >
+    <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-10">
       {/* Honeypot */}
       <div className="absolute -left-[9999px] -top-[9999px]" aria-hidden="true">
-        <label htmlFor="website">Website</label>
+        <label htmlFor="app-website">Website</label>
         <input
-          id="website"
+          id="app-website"
           name="website"
           type="text"
           tabIndex={-1}
@@ -361,184 +346,160 @@ export function RequestForm() {
         />
       </div>
 
-      {/* ---- Section: Identity ---- */}
+      {/* ---- Section 01: Identity ---- */}
       <div>
         <div className="flex items-center gap-3 mb-6">
-          <span className="font-mono text-[10px] text-blue-600 uppercase tracking-[0.2em]">
-            01
-          </span>
+          <span className="font-mono text-[10px] text-blue-600 uppercase tracking-[0.2em]">01</span>
           <div className="h-px flex-1 bg-white/[0.06]" />
-          <span className="font-mono text-[10px] text-white/20 uppercase tracking-[0.15em]">
-            Contact
-          </span>
+          <span className="font-mono text-[10px] text-white/20 uppercase tracking-[0.15em]">Contact</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
           <Field
-            label="First Name"
-            name="firstName"
-            required
-            value={state.values.firstName}
-            error={state.errors.firstName}
-            touched={state.touched.firstName}
-            onChange={(v) => handleChange("firstName", v)}
-            onBlur={() => handleBlur("firstName")}
+            label="First Name" name="firstName" required
+            value={state.values.firstName} error={state.errors.firstName} touched={state.touched.firstName}
+            onChange={(v) => handleChange("firstName", v)} onBlur={() => handleBlur("firstName")}
             placeholder="First"
           />
           <Field
-            label="Last Name"
-            name="lastName"
-            required
-            value={state.values.lastName}
-            error={state.errors.lastName}
-            touched={state.touched.lastName}
-            onChange={(v) => handleChange("lastName", v)}
-            onBlur={() => handleBlur("lastName")}
+            label="Last Name" name="lastName" required
+            value={state.values.lastName} error={state.errors.lastName} touched={state.touched.lastName}
+            onChange={(v) => handleChange("lastName", v)} onBlur={() => handleBlur("lastName")}
             placeholder="Last"
           />
           <Field
-            label="Company Name"
-            name="companyName"
-            required
-            value={state.values.companyName}
-            error={state.errors.companyName}
-            touched={state.touched.companyName}
-            onChange={(v) => handleChange("companyName", v)}
-            onBlur={() => handleBlur("companyName")}
-            placeholder="Company or GC name"
-          />
-          <Field
-            label="Phone Number"
-            name="phone"
-            type="tel"
-            required
-            value={state.values.phone}
-            error={state.errors.phone}
-            touched={state.touched.phone}
-            onChange={(v) => handleChange("phone", v)}
-            onBlur={() => handleBlur("phone")}
+            label="Phone Number" name="phone" type="tel" required
+            value={state.values.phone} error={state.errors.phone} touched={state.touched.phone}
+            onChange={(v) => handleChange("phone", v)} onBlur={() => handleBlur("phone")}
             placeholder="(___) ___-____"
           />
-          <div className="md:col-span-2">
-            <Field
-              label="Email Address"
-              name="email"
-              type="email"
-              required
-              value={state.values.email}
-              error={state.errors.email}
-              touched={state.touched.email}
-              onChange={(v) => handleChange("email", v)}
-              onBlur={() => handleBlur("email")}
-              placeholder="you@company.com"
-            />
-          </div>
+          <Field
+            label="Email Address" name="email" type="email" required
+            value={state.values.email} error={state.errors.email} touched={state.touched.email}
+            onChange={(v) => handleChange("email", v)} onBlur={() => handleBlur("email")}
+            placeholder="you@email.com"
+          />
         </div>
       </div>
 
-      {/* ---- Section: Project ---- */}
+      {/* ---- Section 02: Experience ---- */}
       <div>
         <div className="flex items-center gap-3 mb-6">
-          <span className="font-mono text-[10px] text-blue-600 uppercase tracking-[0.2em]">
-            02
-          </span>
+          <span className="font-mono text-[10px] text-blue-600 uppercase tracking-[0.2em]">02</span>
           <div className="h-px flex-1 bg-white/[0.06]" />
-          <span className="font-mono text-[10px] text-white/20 uppercase tracking-[0.15em]">
-            Project Scope
-          </span>
+          <span className="font-mono text-[10px] text-white/20 uppercase tracking-[0.15em]">Experience</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-          {/* Project Type Select */}
+          {/* Position Select */}
           <div>
-            <label htmlFor="projectType" className={LABEL_BASE}>
-              Project Type <span className="text-blue-500 ml-1">*</span>
+            <label htmlFor="position" className={LABEL_BASE}>
+              Position Applied For <span className="text-blue-500 ml-1">*</span>
             </label>
             <select
-              id="projectType"
-              name="projectType"
-              value={state.values.projectType}
-              onChange={(e) => handleChange("projectType", e.target.value)}
-              onBlur={() => handleBlur("projectType")}
+              id="position"
+              name="position"
+              value={state.values.position}
+              onChange={(e) => handleChange("position", e.target.value)}
+              onBlur={() => handleBlur("position")}
               className={`${INPUT_BASE} appearance-none cursor-pointer ${
-                state.touched.projectType && state.errors.projectType
-                  ? INPUT_ERROR
-                  : ""
-              } ${!state.values.projectType ? "text-white/20" : ""}`}
-              aria-invalid={
-                state.touched.projectType && state.errors.projectType
-                  ? true
-                  : undefined
-              }
+                state.touched.position && state.errors.position ? INPUT_ERROR : ""
+              } ${!state.values.position ? "text-white/20" : ""}`}
+              aria-invalid={state.touched.position && state.errors.position ? true : undefined}
             >
-              <option value="">Select project type</option>
-              <option value="jetting">Fiber Jetting</option>
-              <option value="splicing">Precision Splicing</option>
-              <option value="both">Both</option>
-              <option value="emergency">Emergency Restoration</option>
+              <option value="">Select position</option>
+              <option value="jetting-operator">Fiber Jetting Operator</option>
+              <option value="precision-splicer">Precision Splicer</option>
+              <option value="osp-laborer">OSP Laborer / CDL Driver</option>
             </select>
-            {state.touched.projectType && state.errors.projectType && (
-              <p className="mt-1.5 font-mono text-[10px] text-red-400" role="alert">
-                {state.errors.projectType}
-              </p>
+            {state.touched.position && state.errors.position && (
+              <p className="mt-1.5 font-mono text-[10px] text-red-400" role="alert">{state.errors.position}</p>
             )}
           </div>
 
           <Field
-            label="Estimated Footage / Splice Count"
-            name="estimatedFootage"
-            value={state.values.estimatedFootage}
-            onChange={(v) => handleChange("estimatedFootage", v)}
-            onBlur={() => handleBlur("estimatedFootage")}
-            placeholder="e.g. 12,000 ft or 288ct"
+            label="Years of OSP Experience" name="yearsExperience" type="number" required
+            value={state.values.yearsExperience} error={state.errors.yearsExperience} touched={state.touched.yearsExperience}
+            onChange={(v) => handleChange("yearsExperience", v)} onBlur={() => handleBlur("yearsExperience")}
+            placeholder="e.g. 5"
           />
 
-          <Field
-            label="Target Mobilization Date"
-            name="targetDate"
-            type="date"
-            value={state.values.targetDate}
-            onChange={(v) => handleChange("targetDate", v)}
-            onBlur={() => handleBlur("targetDate")}
-          />
+          {/* CDL Radio */}
+          <div>
+            <label className={LABEL_BASE}>
+              Valid CDL? <span className="text-blue-500 ml-1">*</span>
+            </label>
+            <div className="flex gap-6 pt-2">
+              {[
+                { value: "yes", label: "Yes" },
+                { value: "no", label: "No" },
+              ].map((opt) => (
+                <label
+                  key={opt.value}
+                  className="flex items-center gap-3 cursor-pointer group interactable"
+                >
+                  <div className="relative w-5 h-5 rounded-full border border-white/20 group-hover:border-white/40 transition-colors flex items-center justify-center">
+                    <input
+                      type="radio"
+                      name="hasCDL"
+                      value={opt.value}
+                      checked={state.values.hasCDL === opt.value}
+                      onChange={(e) => handleChange("hasCDL", e.target.value)}
+                      onBlur={() => handleBlur("hasCDL")}
+                      className="sr-only"
+                    />
+                    {state.values.hasCDL === opt.value && (
+                      <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                    )}
+                  </div>
+                  <span className="font-mono text-sm text-white/70 group-hover:text-white transition-colors">
+                    {opt.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+            {state.touched.hasCDL && state.errors.hasCDL && (
+              <p className="mt-1.5 font-mono text-[10px] text-red-400" role="alert">{state.errors.hasCDL}</p>
+            )}
+          </div>
 
-          <div>{/* spacer for grid alignment */}</div>
+          <div>{/* spacer */}</div>
         </div>
 
-        {/* Notes */}
+        {/* Equipment textarea */}
         <div className="mt-6">
-          <label htmlFor="notes" className={LABEL_BASE}>
-            Additional Notes
+          <label htmlFor="equipmentExperience" className={LABEL_BASE}>
+            Equipment Experience
           </label>
           <textarea
-            id="notes"
-            name="notes"
+            id="equipmentExperience"
+            name="equipmentExperience"
             rows={3}
-            value={state.values.notes}
-            onChange={(e) => handleChange("notes", e.target.value)}
-            onBlur={() => handleBlur("notes")}
-            placeholder="Conduit specs, access constraints, scope details..."
+            value={state.values.equipmentExperience}
+            onChange={(e) => handleChange("equipmentExperience", e.target.value)}
+            onBlur={() => handleBlur("equipmentExperience")}
+            placeholder="What specific jetting machines or fusion splicers are you most experienced with?"
             className={`${INPUT_BASE} resize-y min-h-[80px]`}
           />
         </div>
       </div>
 
-      {/* ---- Section: Prints Upload ---- */}
+      {/* ---- Section 03: Resume ---- */}
       <div>
         <div className="flex items-center gap-3 mb-6">
-          <span className="font-mono text-[10px] text-blue-600 uppercase tracking-[0.2em]">
-            03
-          </span>
+          <span className="font-mono text-[10px] text-blue-600 uppercase tracking-[0.2em]">03</span>
           <div className="h-px flex-1 bg-white/[0.06]" />
-          <span className="font-mono text-[10px] text-white/20 uppercase tracking-[0.15em]">
-            Submit Prints
-          </span>
+          <span className="font-mono text-[10px] text-white/20 uppercase tracking-[0.15em]">Resume</span>
         </div>
 
         <FileUpload
-          files={state.files}
-          onChange={(files) => dispatch({ type: "SET_FILES", files })}
+          files={resumeFiles}
+          onChange={setResumeFiles}
+          accept={RESUME_ACCEPT}
+          helpText="Drop Resume (PDF, DOC, DOCX)"
+          maxSize={10 * 1024 * 1024}
         />
+        <p className="mt-2 font-mono text-[10px] text-white/20">Optional — attach your resume if you have one handy</p>
       </div>
 
       {/* ---- Turnstile ---- */}
@@ -549,7 +510,7 @@ export function RequestForm() {
         />
       </div>
 
-      {/* ---- Error display ---- */}
+      {/* ---- Error ---- */}
       {state.submitError && (
         <div className="rounded-sm bg-red-500/10 border border-red-500/20 p-4">
           <p className="font-mono text-xs text-red-400">{state.submitError}</p>
@@ -576,7 +537,7 @@ export function RequestForm() {
             Processing...
           </span>
         ) : (
-          "[ INITIATE PROJECT REVIEW ]"
+          "[ SUBMIT APPLICATION ]"
         )}
       </button>
     </form>

@@ -21,7 +21,7 @@ export function GalleryLightbox({ item, items, onClose, onNavigate }: GalleryLig
 
   const slides = items.map((i) => ({
     src: i.src,
-    alt: i.title,
+    alt: i.altText || i.title,
     title: i.title,
     description: `${i.category.toUpperCase()} // ${i.location}${i.description ? ` — ${i.description}` : ""}`,
   }));

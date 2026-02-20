@@ -172,7 +172,7 @@ export function Lightbox({ item, items, onClose, onNavigate }: LightboxProps) {
               >
                 <Image
                   src={item.src}
-                  alt={item.title}
+                  alt={`${item.title} — ${item.description}`}
                   fill
                   sizes="100vw"
                   className="object-contain"
