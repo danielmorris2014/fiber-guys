@@ -96,21 +96,7 @@ export function USCoverageMap({
   );
   const mapRef = useRef<HTMLDivElement>(null);
 
-  // Fetch dynamic data if props not provided
-  useEffect(() => {
-    if (propActive && propPast) return;
-
-    fetch("/api/content/map")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (data) {
-          if (!propActive && data.activeStates)
-            setActive(new Set(data.activeStates));
-          if (!propPast && data.pastStates) setPast(new Set(data.pastStates));
-        }
-      })
-      .catch(() => {});
-  }, [propActive, propPast]);
+  // Props are now always passed from server components (Sanity or JSON fallback)
 
   // Update from props
   useEffect(() => {

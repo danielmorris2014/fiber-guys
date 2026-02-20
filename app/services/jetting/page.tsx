@@ -3,6 +3,9 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Cable, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getServiceBySlug } from "@/lib/sanity.queries";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Fiber Jetting",
@@ -10,7 +13,7 @@ export const metadata: Metadata = {
     "Production-scale air-blown fiber placement through conduit systems. Mandrel-verified, tension-monitored jetting for metro, long-haul, and microduct applications.",
 };
 
-const capabilities = [
+const defaultCapabilities = [
   "12 to 864 fiber count cable placement",
   "Standard HDPE, SDR-11, and microduct conduit systems",
   "Continuous blowing distances up to 15,000+ feet per setup",
@@ -30,7 +33,7 @@ const deploymentTypes = [
   { label: "BEAD / Grant", desc: "Broadband equity and expansion projects" },
 ];
 
-const deliverables = [
+const defaultDeliverables = [
   "Mandrel test results and conduit verification records",
   "Placement logs with footage counts per segment",
   "Tension and pressure monitoring data",
@@ -39,7 +42,13 @@ const deliverables = [
   "Geo-tagged placement photos at key waypoints",
 ];
 
-export default function JettingPage() {
+export default async function JettingPage() {
+  const sanityService = await getServiceBySlug("jetting");
+
+  const capabilities = sanityService?.features ?? defaultCapabilities;
+  const deliverables = sanityService?.deliverables ?? defaultDeliverables;
+  const tagline = sanityService?.tagline ?? "High-output air-blown fiber placement built for long runs and consistent results.";
+
   return (
     <main className="pt-20 lg:pt-24">
       {/* Header */}
@@ -58,10 +67,10 @@ export default function JettingPage() {
             <span className="caption text-orange">01</span>
           </div>
           <h1 className="font-heading text-h1 lg:text-display font-bold tracking-tighter max-w-3xl">
-            Fiber Jetting
+            {sanityService?.title ?? "Fiber Jetting"}
           </h1>
           <p className="mt-2 text-lg text-orange font-medium">
-            High-output air-blown fiber placement built for long runs and consistent results.
+            {tagline}
           </p>
         </ScrollReveal>
       </section>
@@ -71,25 +80,31 @@ export default function JettingPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           <ScrollReveal>
             <div className="space-y-6 text-muted leading-relaxed">
-              <p>
-                Our jetting crews specialize in production-scale fiber placement
-                through conduit systems of all sizes. We use compressed air to
-                blow fiber optic cable through pre-installed conduit — a method
-                that minimizes cable stress and allows for longer continuous runs
-                compared to traditional pulling methods.
-              </p>
-              <p>
-                Every run is monitored in real-time for air pressure and cable
-                tension to protect cable integrity from start to finish. Before
-                any fiber enters conduit, we mandrel-test and pressure-verify
-                every segment to confirm pathway continuity and identify any
-                obstructions or damage.
-              </p>
-              <p>
-                Whether it&apos;s a single-duct metro run, a multi-path campus
-                distribution, or a long-haul interstate route, we deliver cable
-                safely, efficiently, and on schedule.
-              </p>
+              {sanityService?.description ? (
+                <p>{sanityService.description}</p>
+              ) : (
+                <>
+                  <p>
+                    Our jetting crews specialize in production-scale fiber placement
+                    through conduit systems of all sizes. We use compressed air to
+                    blow fiber optic cable through pre-installed conduit — a method
+                    that minimizes cable stress and allows for longer continuous runs
+                    compared to traditional pulling methods.
+                  </p>
+                  <p>
+                    Every run is monitored in real-time for air pressure and cable
+                    tension to protect cable integrity from start to finish. Before
+                    any fiber enters conduit, we mandrel-test and pressure-verify
+                    every segment to confirm pathway continuity and identify any
+                    obstructions or damage.
+                  </p>
+                  <p>
+                    Whether it&apos;s a single-duct metro run, a multi-path campus
+                    distribution, or a long-haul interstate route, we deliver cable
+                    safely, efficiently, and on schedule.
+                  </p>
+                </>
+              )}
             </div>
           </ScrollReveal>
 
@@ -150,7 +165,6 @@ export default function JettingPage() {
             All equipment is maintained and field-verified before every
             deployment.
           </p>
-          {/* Equipment details will be added when client provides specific model info */}
         </ScrollReveal>
       </section>
 

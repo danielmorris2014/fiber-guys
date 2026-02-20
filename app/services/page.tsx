@@ -3,11 +3,14 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 import { TooltipProvider } from "@/components/ui/Tooltip";
 import { BaselineComparison } from "@/components/services/BaselineComparison";
 import { ProofModule } from "@/components/services/ProofModule";
-import servicesData from "@/content/services.json";
+import { getServices } from "@/lib/sanity.queries";
+import servicesJsonFallback from "@/content/services.json";
 import type { ServiceData } from "@/lib/types";
 import type { Metadata } from "next";
 import { Cable, Zap, ArrowRight } from "lucide-react";
 import Link from "next/link";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Services",
@@ -20,8 +23,22 @@ const iconMap: Record<string, typeof Cable> = {
   zap: Zap,
 };
 
-export default function ServicesPage() {
-  const services = servicesData as ServiceData[];
+export default async function ServicesPage() {
+  const sanityServices = await getServices();
+
+  // Use Sanity data if available, otherwise fall back to JSON
+  const services: ServiceData[] =
+    sanityServices.length > 0
+      ? sanityServices.map((s) => ({
+          id: s._id,
+          title: s.title,
+          slug: s.slug,
+          tagline: s.tagline || "",
+          description: s.description || "",
+          features: s.features || [],
+          icon: s.icon || "cable",
+        }))
+      : (servicesJsonFallback as ServiceData[]);
 
   return (
     <main className="pt-20 lg:pt-24">

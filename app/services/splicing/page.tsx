@@ -3,6 +3,9 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Zap, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getServiceBySlug } from "@/lib/sanity.queries";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Fiber Splicing",
@@ -10,7 +13,7 @@ export const metadata: Metadata = {
     "Precision core-alignment fusion splicing with organized trays, labeled closures, and closeout-ready documentation. Ribbon and single-fiber capabilities.",
 };
 
-const capabilities = [
+const defaultCapabilities = [
   "Core-alignment fusion splicing with ≤0.03dB splice loss standard",
   "Mass fusion (ribbon) and individual single-fiber splicing",
   "Fiber counts from 12 to 864 per closure",
@@ -30,7 +33,7 @@ const cableTypes = [
   { label: "Armored", desc: "Steel or corrugated armor for direct burial protection" },
 ];
 
-const deliverables = [
+const defaultDeliverables = [
   "OTDR trace documentation for every strand spliced",
   "Splice loss report organized by closure and tray",
   "Geo-tagged photos of every completed closure",
@@ -39,7 +42,13 @@ const deliverables = [
   "As-built splice records ready for closeout submission",
 ];
 
-export default function SplicingPage() {
+export default async function SplicingPage() {
+  const sanityService = await getServiceBySlug("splicing");
+
+  const capabilities = sanityService?.features ?? defaultCapabilities;
+  const deliverables = sanityService?.deliverables ?? defaultDeliverables;
+  const tagline = sanityService?.tagline ?? "Clean trays, clear labeling, and organized closures ready for handoff.";
+
   return (
     <main className="pt-20 lg:pt-24">
       {/* Header */}
@@ -58,10 +67,10 @@ export default function SplicingPage() {
             <span className="caption text-orange">02</span>
           </div>
           <h1 className="font-heading text-h1 lg:text-display font-bold tracking-tighter max-w-3xl">
-            Fiber Splicing
+            {sanityService?.title ?? "Fiber Splicing"}
           </h1>
           <p className="mt-2 text-lg text-orange font-medium">
-            Clean trays, clear labeling, and organized closures ready for handoff.
+            {tagline}
           </p>
         </ScrollReveal>
       </section>
@@ -71,25 +80,31 @@ export default function SplicingPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           <ScrollReveal>
             <div className="space-y-6 text-muted leading-relaxed">
-              <p>
-                Precision matters when fibers meet. Our splicing teams deliver
-                consistently low-loss fusion splices using core-alignment
-                splicers that verify alignment before each arc weld. Every
-                splice is protected with a heat shrink sleeve and routed cleanly
-                into organized trays.
-              </p>
-              <p>
-                We handle both mass fusion (ribbon) splicing for high-count
-                applications and individual single-fiber splicing for standard
-                loose-tube cable. Buffer tube identification follows TIA-598
-                color coding, and every closure is permanently labeled with
-                strand assignments.
-              </p>
-              <p>
-                When we hand off a splice closure, it&apos;s ready for the next
-                crew, the end client, or direct closeout submission. No
-                callbacks. No rework. No loose ends.
-              </p>
+              {sanityService?.description ? (
+                <p>{sanityService.description}</p>
+              ) : (
+                <>
+                  <p>
+                    Precision matters when fibers meet. Our splicing teams deliver
+                    consistently low-loss fusion splices using core-alignment
+                    splicers that verify alignment before each arc weld. Every
+                    splice is protected with a heat shrink sleeve and routed cleanly
+                    into organized trays.
+                  </p>
+                  <p>
+                    We handle both mass fusion (ribbon) splicing for high-count
+                    applications and individual single-fiber splicing for standard
+                    loose-tube cable. Buffer tube identification follows TIA-598
+                    color coding, and every closure is permanently labeled with
+                    strand assignments.
+                  </p>
+                  <p>
+                    When we hand off a splice closure, it&apos;s ready for the next
+                    crew, the end client, or direct closeout submission. No
+                    callbacks. No rework. No loose ends.
+                  </p>
+                </>
+              )}
             </div>
           </ScrollReveal>
 
@@ -150,7 +165,6 @@ export default function SplicingPage() {
             splicer is calibrated and maintained to manufacturer specifications.
             OTDR and power meter testing equipment is deployed on every job.
           </p>
-          {/* Equipment details will be added when client provides specific model info */}
         </ScrollReveal>
       </section>
 

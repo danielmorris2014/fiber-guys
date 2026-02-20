@@ -2,8 +2,12 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { USCoverageMap } from "@/components/ui/USCoverageMap";
 import { Mail, MapPin } from "lucide-react";
-import { getContent } from "@/lib/content-store";
+import { getSiteSettings } from "@/lib/sanity.queries";
+import mapFallback from "@/content/map.json";
+import siteContentFallback from "@/content/site-content.json";
 import type { Metadata } from "next";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -12,17 +16,14 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const mapData = (await getContent("map")) as {
-    activeStates: string[];
-    pastStates: string[];
-  } | null;
+  const siteSettings = await getSiteSettings();
 
-  const siteContent = (await getContent("site")) as {
-    coverage?: { description?: string };
-  } | null;
+  const activeStates = siteSettings?.activeStates ?? mapFallback.activeStates;
+  const pastStates = siteSettings?.pastStates ?? mapFallback.pastStates;
 
   const coverageDesc =
-    siteContent?.coverage?.description ||
+    siteSettings?.coverageDescription ||
+    siteContentFallback.coverage?.description ||
     "Currently operating in Missouri, Georgia, Tennessee, Alabama, and Florida. Available for mobilization nationwide.";
 
   return (
@@ -113,8 +114,8 @@ export default async function ContactPage() {
               </h2>
               <p className="text-sm text-muted mb-8">{coverageDesc}</p>
               <USCoverageMap
-                activeStates={mapData?.activeStates}
-                pastStates={mapData?.pastStates}
+                activeStates={activeStates}
+                pastStates={pastStates}
               />
             </div>
           </ScrollReveal>
