@@ -2,7 +2,11 @@ import { Suspense } from "react";
 import { ApplicationForm, type PositionOption } from "@/components/forms/ApplicationForm";
 import { JobAlertForm } from "@/components/forms/JobAlertForm";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
-import { PositionCard, type SerializablePosition } from "@/components/careers/PositionCard";
+import { BenefitsSection } from "@/components/careers/BenefitsSection";
+import { PositionsWithFilter } from "@/components/careers/PositionsWithFilter";
+import { ReferralSection } from "@/components/careers/ReferralSection";
+import { CareersFAQ } from "@/components/careers/CareersFAQ";
+import type { SerializablePosition } from "@/components/careers/PositionCard";
 import { getActiveJobs, getSiteSettings } from "@/lib/sanity.queries";
 import type { Metadata } from "next";
 
@@ -57,6 +61,9 @@ export default async function CareersPage() {
     location: job.location ?? undefined,
     type: job.type ?? undefined,
     requirements: job.requirements ?? undefined,
+    salaryMin: job.salaryMin ?? undefined,
+    salaryMax: job.salaryMax ?? undefined,
+    salaryType: job.salaryType ?? undefined,
   }));
 
   const hasPositions = POSITIONS.length > 0;
@@ -66,6 +73,8 @@ export default async function CareersPage() {
     value: job.slug || titleToSlug(job.title),
     label: job.title,
   }));
+
+  const showReferral = siteSettings?.referralActive === true;
 
   return (
     <main className="pt-20 lg:pt-24">
@@ -89,7 +98,12 @@ export default async function CareersPage() {
       </section>
 
       {/* ================================================================
-          Open Positions (or Empty State)
+          Benefits Section
+          ================================================================ */}
+      <BenefitsSection benefits={siteSettings?.careersBenefits} />
+
+      {/* ================================================================
+          Open Positions (with Location Filter)
           ================================================================ */}
       <section className="mx-auto max-w-7xl px-6 lg:px-8 pb-section-sm lg:pb-section">
         <ScrollReveal>
@@ -104,35 +118,24 @@ export default async function CareersPage() {
           </div>
         </ScrollReveal>
 
-        {hasPositions ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {POSITIONS.map((pos, i) => (
-              <ScrollReveal key={pos.title} delay={i * 0.1}>
-                <PositionCard pos={pos} />
-              </ScrollReveal>
-            ))}
-          </div>
-        ) : (
-          <ScrollReveal>
-            <div className="border border-white/[0.06] rounded-sm bg-white/[0.01] p-12 lg:p-16 text-center">
-              <div className="w-12 h-12 mx-auto mb-6 border border-white/[0.08] rounded-sm flex items-center justify-center bg-white/[0.02]">
-                <span className="font-mono text-lg text-white/20">—</span>
-              </div>
-              <h3 className="font-heading text-xl font-bold text-white mb-3">
-                No Open Positions Right Now
-              </h3>
-              <p className="font-mono text-sm text-white/40 max-w-md mx-auto mb-2">
-                All crews are currently staffed. We post new roles as projects
-                come in — jetting operators, splicers, and CDL drivers.
-              </p>
-              <p className="font-mono text-xs text-white/25 max-w-sm mx-auto">
-                Drop your email in the Talent Network below and we will reach
-                out when something opens up.
-              </p>
-            </div>
-          </ScrollReveal>
-        )}
+        <PositionsWithFilter positions={POSITIONS} />
       </section>
+
+      {/* ================================================================
+          Referral Program (only if active in CMS)
+          ================================================================ */}
+      {showReferral && (
+        <ReferralSection
+          bonusAmount={siteSettings?.referralBonusAmount}
+          description={siteSettings?.referralDescription}
+          positions={positionOptions}
+        />
+      )}
+
+      {/* ================================================================
+          Careers FAQ
+          ================================================================ */}
+      <CareersFAQ items={siteSettings?.careersFAQ} />
 
       {/* ================================================================
           Talent Network
@@ -234,6 +237,19 @@ export default async function CareersPage() {
                     className="font-mono text-sm text-blue-400 hover:text-blue-300 transition-colors interactable"
                   >
                     {careersEmail}
+                  </a>
+                </div>
+
+                {/* Status Lookup Link */}
+                <div className="border border-white/[0.06] rounded-sm bg-white/[0.02] p-6">
+                  <h3 className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/40 mb-4">
+                    Already Applied?
+                  </h3>
+                  <a
+                    href="/careers/status"
+                    className="font-mono text-sm text-blue-400 hover:text-blue-300 transition-colors interactable"
+                  >
+                    Check Application Status &rarr;
                   </a>
                 </div>
               </div>

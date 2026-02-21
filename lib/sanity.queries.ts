@@ -14,6 +14,9 @@ export interface SanityJobPosting {
   requirements: string[];
   tags: string[];
   active: boolean;
+  salaryMin: number | null;
+  salaryMax: number | null;
+  salaryType: string | null;
 }
 
 export interface SanityGalleryImage {
@@ -52,6 +55,12 @@ export interface SanitySiteSettings {
   coverageDescription: string | null;
   activeStates: string[] | null;
   pastStates: string[] | null;
+  // Careers
+  careersBenefits: { icon: string; title: string; description: string }[] | null;
+  careersFAQ: { question: string; answer: string }[] | null;
+  referralActive: boolean | null;
+  referralBonusAmount: string | null;
+  referralDescription: string | null;
   // Announcements
   announcementText: string | null;
   announcementActive: boolean | null;
@@ -128,7 +137,10 @@ const JOBS_QUERY = `*[_type == "jobPosting" && active == true] | order(title asc
   description,
   requirements,
   tags,
-  active
+  active,
+  salaryMin,
+  salaryMax,
+  salaryType
 }`;
 
 export async function getActiveJobs(): Promise<SanityJobPosting[]> {
@@ -151,7 +163,10 @@ const JOB_BY_SLUG_QUERY = `*[_type == "jobPosting" && slug.current == $slug && a
   description,
   requirements,
   tags,
-  active
+  active,
+  salaryMin,
+  salaryMax,
+  salaryType
 }`;
 
 export async function getJobBySlug(slug: string): Promise<SanityJobPosting | null> {
@@ -243,6 +258,11 @@ const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0] {
   coverageDescription,
   activeStates,
   pastStates,
+  careersBenefits,
+  careersFAQ,
+  referralActive,
+  referralBonusAmount,
+  referralDescription,
   announcementText,
   announcementActive,
   thankYouHeading,

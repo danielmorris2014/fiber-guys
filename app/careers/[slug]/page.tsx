@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getJobBySlug, getAllJobSlugs } from "@/lib/sanity.queries";
 import { PortableText } from "@/components/sanity/PortableText";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { PayRange } from "@/components/careers/PayRange";
 import { ArrowLeft, MapPin, Briefcase } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -50,7 +51,7 @@ export default async function JobDetailPage({ params }: PageProps) {
             {job.title}
           </h1>
 
-          <div className="flex items-center gap-6 mt-4">
+          <div className="flex flex-wrap items-center gap-4 mt-4">
             {job.location && (
               <span className="inline-flex items-center gap-1.5 font-mono text-xs text-white/40 uppercase tracking-[0.1em]">
                 <MapPin className="w-3 h-3" />
@@ -63,6 +64,11 @@ export default async function JobDetailPage({ params }: PageProps) {
                 {job.type}
               </span>
             )}
+            <PayRange
+              salaryMin={job.salaryMin}
+              salaryMax={job.salaryMax}
+              salaryType={job.salaryType}
+            />
           </div>
 
           {/* Tags */}

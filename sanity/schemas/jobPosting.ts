@@ -71,6 +71,34 @@ export const jobPosting = defineType({
         'Short skill badges shown on the job card. Examples: "CDL", "Fusion Splicing", "OTDR", "Travel Required". Keep each tag to 1-3 words.',
     }),
     defineField({
+      name: "salaryMin",
+      title: "Pay Range — Minimum",
+      type: "number",
+      description:
+        'Minimum pay for this role. Leave blank to hide pay range on the listing. Example: 25 (for $25/hr) or 55000 (for $55,000/yr).',
+    }),
+    defineField({
+      name: "salaryMax",
+      title: "Pay Range — Maximum",
+      type: "number",
+      description:
+        "Maximum pay for this role. If only minimum is set, the range shows as 'From $X'. If both are set, shows '$X – $Y'.",
+    }),
+    defineField({
+      name: "salaryType",
+      title: "Pay Type",
+      type: "string",
+      options: {
+        list: [
+          { title: "Hourly", value: "hourly" },
+          { title: "Annual", value: "annual" },
+          { title: "Per Diem", value: "per-diem" },
+        ],
+      },
+      description:
+        'How pay is structured. Determines the label shown (e.g. "/hr", "/yr", "/day").',
+    }),
+    defineField({
       name: "active",
       title: "Active",
       type: "boolean",

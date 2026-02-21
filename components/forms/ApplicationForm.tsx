@@ -30,6 +30,7 @@ interface FormState {
   submitting: boolean;
   submitError: string;
   submitted: boolean;
+  trackingNumber: string;
 }
 
 type Action =
@@ -39,7 +40,7 @@ type Action =
   | { type: "CLEAR_ERROR"; field: string }
   | { type: "SUBMIT_START" }
   | { type: "SUBMIT_ERROR"; error: string }
-  | { type: "SUBMIT_SUCCESS" }
+  | { type: "SUBMIT_SUCCESS"; trackingNumber?: string }
   | { type: "RESET" };
 
 const initialState: FormState = {
@@ -59,6 +60,7 @@ const initialState: FormState = {
   submitting: false,
   submitError: "",
   submitted: false,
+  trackingNumber: "",
 };
 
 function reducer(state: FormState, action: Action): FormState {
@@ -79,7 +81,7 @@ function reducer(state: FormState, action: Action): FormState {
     case "SUBMIT_ERROR":
       return { ...state, submitting: false, submitError: action.error };
     case "SUBMIT_SUCCESS":
-      return { ...state, submitting: false, submitted: true };
+      return { ...state, submitting: false, submitted: true, trackingNumber: action.trackingNumber || "" };
     case "RESET":
       return initialState;
     default:
@@ -190,7 +192,7 @@ function Field({
 // ---------------------------------------------------------------------------
 // Success
 // ---------------------------------------------------------------------------
-function SuccessState({ onReset }: { onReset: () => void }) {
+function SuccessState({ onReset, trackingNumber }: { onReset: () => void; trackingNumber?: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div className="w-16 h-16 rounded-full bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center mb-6">
@@ -199,19 +201,37 @@ function SuccessState({ onReset }: { onReset: () => void }) {
       <h3 className="font-heading text-2xl font-bold text-white mb-2">
         Application Received
       </h3>
+      {trackingNumber && (
+        <div className="bg-white/[0.03] border border-white/[0.08] rounded-sm px-5 py-3 mb-4">
+          <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-white/30 mb-1">
+            Tracking Number
+          </p>
+          <p className="font-mono text-lg text-blue-400 font-bold">
+            {trackingNumber}
+          </p>
+        </div>
+      )}
       <p className="font-mono text-sm text-white/50 max-w-md mb-2">
         If your experience matches our current needs, dispatch will reach out.
       </p>
-      <p className="font-mono text-xs text-white/30 mb-8">
+      <p className="font-mono text-xs text-white/30 mb-6">
         We review applications on a rolling basis
       </p>
-      <button
-        type="button"
-        onClick={onReset}
-        className="font-mono text-xs uppercase tracking-[0.15em] text-blue-400 hover:text-blue-300 transition-colors interactable"
-      >
-        [ Submit Another Application ]
-      </button>
+      <div className="flex flex-col items-center gap-3">
+        <a
+          href="/careers/status"
+          className="font-mono text-xs uppercase tracking-[0.15em] text-emerald-400 hover:text-emerald-300 transition-colors interactable"
+        >
+          [ Check Application Status ]
+        </a>
+        <button
+          type="button"
+          onClick={onReset}
+          className="font-mono text-xs uppercase tracking-[0.15em] text-blue-400 hover:text-blue-300 transition-colors interactable"
+        >
+          [ Submit Another Application ]
+        </button>
+      </div>
     </div>
   );
 }
@@ -322,9 +342,11 @@ export function ApplicationForm({ positions = [] }: ApplicationFormProps) {
         return;
       }
 
-      dispatch({ type: "SUBMIT_SUCCESS" });
+      dispatch({ type: "SUBMIT_SUCCESS", trackingNumber: result.trackingNumber });
       toast.success("Application submitted", {
-        description: "We'll review your experience and be in touch.",
+        description: result.trackingNumber
+          ? `Tracking number: ${result.trackingNumber}`
+          : "We'll review your experience and be in touch.",
       });
     } catch {
       const msg = "Network error. Please check your connection and try again.";
@@ -334,7 +356,7 @@ export function ApplicationForm({ positions = [] }: ApplicationFormProps) {
   };
 
   if (state.submitted) {
-    return <SuccessState onReset={() => { dispatch({ type: "RESET" }); setResumeFiles([]); }} />;
+    return <SuccessState trackingNumber={state.trackingNumber} onReset={() => { dispatch({ type: "RESET" }); setResumeFiles([]); }} />;
   }
 
   return (

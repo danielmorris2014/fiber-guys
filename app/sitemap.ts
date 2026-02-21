@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/about",
     "/contact",
     "/careers",
+    "/careers/status",
   ];
 
   return routes.map((route) => ({

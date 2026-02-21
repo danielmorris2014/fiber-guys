@@ -2,6 +2,7 @@
 
 import { ArrowRight, MapPin, Briefcase, Zap, Wrench, Truck, type LucideIcon } from "lucide-react";
 import Link from "next/link";
+import { PayRange } from "@/components/careers/PayRange";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Zap,
@@ -18,6 +19,9 @@ export interface SerializablePosition {
   location?: string;
   type?: string;
   requirements?: string[];
+  salaryMin?: number | null;
+  salaryMax?: number | null;
+  salaryType?: string | null;
 }
 
 export function PositionCard({ pos }: { pos: SerializablePosition }) {
@@ -50,6 +54,15 @@ export function PositionCard({ pos }: { pos: SerializablePosition }) {
                 </span>
               )}
             </p>
+          )}
+          {(pos.salaryMin || pos.salaryMax) && (
+            <div className="mt-2">
+              <PayRange
+                salaryMin={pos.salaryMin}
+                salaryMax={pos.salaryMax}
+                salaryType={pos.salaryType}
+              />
+            </div>
           )}
         </div>
       </div>

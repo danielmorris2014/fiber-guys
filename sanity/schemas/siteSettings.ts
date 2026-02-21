@@ -9,6 +9,7 @@ export const siteSettings = defineType({
     { name: "contact", title: "Contact Info", default: true },
     { name: "homepage", title: "Homepage" },
     { name: "coverage", title: "Coverage Map" },
+    { name: "careers", title: "Careers Page" },
     { name: "announcements", title: "Announcements" },
     { name: "thankyou", title: "Thank You Page" },
   ],
@@ -187,6 +188,81 @@ export const siteSettings = defineType({
       of: [{ type: "string", options: { list: US_STATES_OPTIONS } }],
       description:
         "States where crews have PREVIOUSLY worked (lighter shade on the map).",
+    }),
+
+    // ═══════════════════════════════════════════
+    //  CAREERS PAGE
+    // ═══════════════════════════════════════════
+    defineField({
+      name: "careersBenefits",
+      title: "Benefits",
+      type: "array",
+      group: "careers",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({ name: "icon", title: "Icon", type: "string", description: 'Emoji or short icon label. Examples: "🏥", "💰", "🚛".' }),
+            defineField({ name: "title", title: "Title", type: "string", description: 'Benefit name. Examples: "Health Insurance", "Per Diem".' }),
+            defineField({ name: "description", title: "Description", type: "text", rows: 2, description: "One or two sentences about this benefit." }),
+          ],
+          preview: {
+            select: { title: "title", subtitle: "description", media: "icon" },
+            prepare({ title, subtitle, media }) {
+              return { title: `${media || "•"} ${title || "Untitled"}`, subtitle };
+            },
+          },
+        },
+      ],
+      description:
+        "Benefits shown on the Careers page. Leave empty to use defaults (health, per diem, equipment, travel pay).",
+    }),
+    defineField({
+      name: "careersFAQ",
+      title: "Careers FAQ",
+      type: "array",
+      group: "careers",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({ name: "question", title: "Question", type: "string" }),
+            defineField({ name: "answer", title: "Answer", type: "text", rows: 3 }),
+          ],
+          preview: {
+            select: { title: "question", subtitle: "answer" },
+          },
+        },
+      ],
+      description:
+        "Frequently asked questions shown on the Careers page. Leave empty to use defaults.",
+    }),
+    defineField({
+      name: "referralActive",
+      title: "Referral Program Active",
+      type: "boolean",
+      group: "careers",
+      initialValue: false,
+      description:
+        "Toggle ON to show the referral program section on the Careers page.",
+    }),
+    defineField({
+      name: "referralBonusAmount",
+      title: "Referral Bonus Amount",
+      type: "string",
+      group: "careers",
+      initialValue: "$500",
+      description:
+        'The bonus amount displayed in the referral section. Example: "$500".',
+    }),
+    defineField({
+      name: "referralDescription",
+      title: "Referral Description",
+      type: "text",
+      rows: 3,
+      group: "careers",
+      description:
+        "Paragraph explaining how the referral program works.",
     }),
 
     // ═══════════════════════════════════════════
