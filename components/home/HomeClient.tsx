@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import type { FAQItem } from '@/lib/types';
 import type { SanityTestimonial, MapProject } from '@/lib/sanity.queries';
 import Link from 'next/link';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { IndustryMarquee } from '@/components/home/IndustryMarquee';
 import { TextScramble } from '@/components/ui/TextScramble';
@@ -240,7 +241,7 @@ export default function HomeClient({
           scrollTrigger: {
             trigger: horizontalSectionRef.current,
             pin: true,
-            scrub: true,
+            scrub: 0.5,
             end: () => `+=${track.scrollWidth - window.innerWidth}`,
             invalidateOnRefresh: true,
           }
@@ -450,7 +451,15 @@ export default function HomeClient({
         {/* Services Split */}
         <section id="services" className="min-h-screen relative flex flex-col md:flex-row border-b border-white/10 overflow-hidden">
             <SpotlightCard className="w-full md:w-1/2 min-h-[50vh] md:min-h-screen border-b md:border-b-0 md:border-r border-white/10 relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-[#050505] to-[#0a0a0a] transition-all duration-700 group-hover:from-blue-600/30"></div>
+                <Image
+                  src="/images/jetting-hero.png"
+                  alt="Plumett SuperJet fiber jetting machine with cable reel on job site"
+                  fill
+                  className="object-cover opacity-30 group-hover:opacity-40 transition-opacity duration-700"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-[#050505]/80 to-[#0a0a0a]/90 transition-all duration-700 group-hover:from-blue-600/30"></div>
                 <div className="relative z-10 p-12 h-full flex flex-col justify-between">
                     <div className="font-mono text-blue-600 text-sm">[01]</div>
                     <div>
@@ -469,7 +478,15 @@ export default function HomeClient({
             </SpotlightCard>
 
             <SpotlightCard className="w-full md:w-1/2 min-h-[50vh] md:min-h-screen relative group">
-                <div className="absolute inset-0 bg-gradient-to-bl from-blue-600/20 via-[#050505] to-[#0a0a0a] transition-all duration-700 group-hover:from-blue-600/30"></div>
+                <Image
+                  src="/images/splicing-hero.png"
+                  alt="Fiber Guys technician performing precision fusion splicing with organized tray and OTDR testing"
+                  fill
+                  className="object-cover opacity-30 group-hover:opacity-40 transition-opacity duration-700"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-bl from-blue-600/20 via-[#050505]/80 to-[#0a0a0a]/90 transition-all duration-700 group-hover:from-blue-600/30"></div>
                 <div className="relative z-10 p-12 h-full flex flex-col justify-between">
                     <div className="font-mono text-blue-600 text-sm">[02]</div>
                     <div>
@@ -494,21 +511,21 @@ export default function HomeClient({
                 <h2 className="font-display text-4xl uppercase font-bold text-white">The Protocol</h2>
                 <p className="font-mono text-sm mt-2 opacity-80 text-white">Methodology // Execution</p>
             </div>
-            <div className="process-track flex flex-row flex-nowrap h-full items-center" style={{ width: `${((processSteps && processSteps.length > 0 ? processSteps.length : 5) * 100)}vw` }}>
+            <div className="process-track flex flex-row flex-nowrap h-full items-center gap-0">
                 {(processSteps && processSteps.length > 0
                     ? processSteps.map((s, i) => ({ step: String(i + 1).padStart(2, '0'), title: s.title, desc: s.description }))
                     : [
-                        { step: '01', title: 'Scope & Verify', desc: 'We review the project scope, verify conduit specs, and confirm we can deliver. Once everything checks out, we move to mobilization.' },
-                        { step: '02', title: 'Mobilize', desc: 'Equipment and experienced crews deployed to site. Compressor pressures calibrated to conduit specifications.' },
-                        { step: '03', title: 'Execute', desc: 'Production fiber placement or precision fusion splicing. Tension monitoring, bend radius compliance, and real-time quality checks.' },
-                        { step: '04', title: 'Document', desc: 'OTDR testing, splice loss verification, tray photography, and labeled enclosures. Every strand accounted for.' },
-                        { step: '05', title: 'Handoff', desc: 'Clean site, organized closures, and a documentation package ready for client review or closeout submission.' }
+                        { step: '01', title: 'Scope & Verify', desc: 'Review project scope, verify conduit specs, and confirm deliverables before mobilization.' },
+                        { step: '02', title: 'Mobilize', desc: 'Equipment and crews deployed to site. Compressor pressures calibrated to conduit specifications.' },
+                        { step: '03', title: 'Execute', desc: 'Production fiber placement or precision fusion splicing with real-time quality checks.' },
+                        { step: '04', title: 'Document', desc: 'OTDR testing, splice loss verification, tray photography, and labeled enclosures.' },
+                        { step: '05', title: 'Handoff', desc: 'Clean site, organized closures, and a documentation package ready for closeout.' }
                     ]
                 ).map((p, i) => (
-                    <div key={i} className="w-screen flex-shrink-0 px-12 flex flex-col justify-center h-full border-r border-white/20 last:border-r-0 text-white">
-                        <span className="font-display text-[20vh] md:text-[30vh] opacity-20 font-bold mb-4 text-black leading-none">{p.step}</span>
-                        <h3 className="font-display text-5xl md:text-7xl font-bold uppercase mb-6">{p.title}</h3>
-                        <p className="font-sans text-xl md:text-2xl max-w-xl leading-relaxed">{p.desc}</p>
+                    <div key={i} className="w-[85vw] md:w-[50vw] lg:w-[40vw] flex-shrink-0 px-8 md:px-12 flex flex-col justify-center h-full border-r border-white/20 last:border-r-0 text-white">
+                        <span className="font-display text-[15vh] md:text-[20vh] opacity-20 font-bold mb-2 text-black leading-none">{p.step}</span>
+                        <h3 className="font-display text-4xl md:text-5xl font-bold uppercase mb-4">{p.title}</h3>
+                        <p className="font-sans text-lg md:text-xl max-w-md leading-relaxed">{p.desc}</p>
                     </div>
                 ))}
             </div>
