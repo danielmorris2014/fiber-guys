@@ -202,14 +202,37 @@ export const siteSettings = defineType({
         {
           type: "object",
           fields: [
-            defineField({ name: "icon", title: "Icon", type: "string", description: 'Emoji or short icon label. Examples: "🏥", "💰", "🚛".' }),
+            defineField({
+              name: "icon",
+              title: "Icon",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Health / Medical", value: "health" },
+                  { title: "Dollar / Pay", value: "dollar" },
+                  { title: "Truck / Equipment", value: "equipment" },
+                  { title: "Plane / Travel", value: "travel" },
+                  { title: "Growth / Trending Up", value: "growth" },
+                  { title: "Training / Graduation", value: "training" },
+                  { title: "Shield / Safety", value: "safety" },
+                  { title: "Wrench / Tools", value: "tools" },
+                  { title: "Clock / Time", value: "time" },
+                  { title: "Home / Housing", value: "housing" },
+                  { title: "Users / Team", value: "team" },
+                  { title: "Zap / Energy", value: "zap" },
+                  { title: "Award / Recognition", value: "award" },
+                  { title: "Badge / Certification", value: "badge" },
+                ],
+              },
+              description: "Choose an icon for this benefit.",
+            }),
             defineField({ name: "title", title: "Title", type: "string", description: 'Benefit name. Examples: "Health Insurance", "Per Diem".' }),
             defineField({ name: "description", title: "Description", type: "text", rows: 2, description: "One or two sentences about this benefit." }),
           ],
           preview: {
-            select: { title: "title", subtitle: "description", media: "icon" },
-            prepare({ title, subtitle, media }) {
-              return { title: `${media || "•"} ${title || "Untitled"}`, subtitle };
+            select: { title: "title", subtitle: "description", icon: "icon" },
+            prepare({ title, subtitle, icon }) {
+              return { title: `[${icon || "—"}] ${title || "Untitled"}`, subtitle };
             },
           },
         },
