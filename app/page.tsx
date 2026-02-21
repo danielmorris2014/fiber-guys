@@ -1,5 +1,5 @@
 // JSON files are fallback only — primary source is Sanity CMS
-import { getFAQItems, getSiteSettings, getTestimonials } from "@/lib/sanity.queries";
+import { getFAQItems, getSiteSettings, getTestimonials, getMapProjects } from "@/lib/sanity.queries";
 import faqFallback from "@/content/faq.json";
 import testimonialsFallback from "@/content/testimonials.json";
 import siteContentFallback from "@/content/site-content.json";
@@ -10,10 +10,11 @@ import HomeClient from "@/components/home/HomeClient";
 export const revalidate = 3600;
 
 export default async function Home() {
-  const [sanityFaq, siteSettings, sanityTestimonials] = await Promise.all([
+  const [sanityFaq, siteSettings, sanityTestimonials, mapProjects] = await Promise.all([
     getFAQItems(),
     getSiteSettings(),
     getTestimonials(),
+    getMapProjects(),
   ]);
 
   // FAQ: use Sanity if available, otherwise JSON fallback
@@ -38,9 +39,22 @@ export default async function Home() {
   const coverageDescription =
     siteSettings?.coverageDescription ?? siteContentFallback.coverage?.description ?? null;
 
-  // Map data: Sanity or JSON fallback
-  const activeStates = siteSettings?.activeStates ?? mapFallback.activeStates;
-  const pastStates = siteSettings?.pastStates ?? mapFallback.pastStates;
+  // Map data: only use JSON fallback when Sanity is not configured (siteSettings is null).
+  // When Sanity IS configured, respect whatever the CMS has — even empty arrays.
+  const activeStates = siteSettings
+    ? (siteSettings.activeStates ?? [])
+    : mapFallback.activeStates;
+  const pastStates = siteSettings
+    ? (siteSettings.pastStates ?? [])
+    : mapFallback.pastStates;
+
+  // Hiring strip
+  const hiringStripActive = siteSettings?.hiringStripActive ?? false;
+  const hiringStripText = siteSettings?.hiringStripText ?? null;
+
+  // Stats & Process (null = use component defaults)
+  const stats = siteSettings?.stats ?? null;
+  const processSteps = siteSettings?.processSteps ?? null;
 
   // Testimonials: Sanity or JSON fallback
   const testimonials =
@@ -65,6 +79,11 @@ export default async function Home() {
       activeStates={activeStates}
       pastStates={pastStates}
       testimonials={testimonials}
+      hiringStripActive={hiringStripActive}
+      hiringStripText={hiringStripText}
+      mapProjects={mapProjects}
+      stats={stats}
+      processSteps={processSteps}
     />
   );
 }

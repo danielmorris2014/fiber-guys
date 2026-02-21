@@ -219,7 +219,10 @@ function SuccessState({ onReset }: { onReset: () => void }) {
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
-const VALID_ROLES = ["jetting-operator", "precision-splicer", "osp-laborer"];
+export interface PositionOption {
+  value: string;
+  label: string;
+}
 
 const RESUME_ACCEPT: Record<string, string[]> = {
   "application/pdf": [".pdf"],
@@ -227,7 +230,11 @@ const RESUME_ACCEPT: Record<string, string[]> = {
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
 };
 
-export function ApplicationForm() {
+interface ApplicationFormProps {
+  positions?: PositionOption[];
+}
+
+export function ApplicationForm({ positions = [] }: ApplicationFormProps) {
   const searchParams = useSearchParams();
   const [state, dispatch] = useReducer(reducer, initialState);
   const formRef = useRef<HTMLFormElement>(null);
@@ -235,27 +242,27 @@ export function ApplicationForm() {
   const [resumeFiles, setResumeFiles] = useState<File[]>([]);
   const initialRoleApplied = useRef(false);
 
-  // Pre-select position from ?role= URL param
+  // Pre-select position from ?role= URL param (matches against slug values)
   useEffect(() => {
     if (initialRoleApplied.current) return;
     const role = searchParams.get("role");
-    if (role && VALID_ROLES.includes(role)) {
+    if (role && positions.some((p) => p.value === role)) {
       dispatch({ type: "SET_FIELD", field: "position", value: role });
       initialRoleApplied.current = true;
     }
-  }, [searchParams]);
+  }, [searchParams, positions]);
 
   // Listen for role-selected custom event (from "Apply Now" buttons)
   useEffect(() => {
     const handler = (e: Event) => {
       const role = (e as CustomEvent).detail;
-      if (role && VALID_ROLES.includes(role)) {
+      if (role && positions.some((p) => p.value === role)) {
         dispatch({ type: "SET_FIELD", field: "position", value: role });
       }
     };
     window.addEventListener("role-selected", handler);
     return () => window.removeEventListener("role-selected", handler);
-  }, []);
+  }, [positions]);
 
   const handleChange = useCallback((field: string, value: string) => {
     dispatch({ type: "SET_FIELD", field, value });
@@ -407,10 +414,12 @@ export function ApplicationForm() {
               } ${!state.values.position ? "text-white/20" : ""}`}
               aria-invalid={state.touched.position && state.errors.position ? true : undefined}
             >
-              <option value="">Select position</option>
-              <option value="jetting-operator">Fiber Jetting Operator</option>
-              <option value="precision-splicer">Precision Splicer</option>
-              <option value="osp-laborer">OSP Laborer / CDL Driver</option>
+              <option value="" className="text-black bg-white">Select position</option>
+              {positions.map((pos) => (
+                <option key={pos.value} value={pos.value} className="text-black bg-white">
+                  {pos.label}
+                </option>
+              ))}
             </select>
             {state.touched.position && state.errors.position && (
               <p className="mt-1.5 font-mono text-[10px] text-red-400" role="alert">{state.errors.position}</p>

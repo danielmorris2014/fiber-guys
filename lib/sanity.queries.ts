@@ -34,13 +34,30 @@ export interface SanityFAQItem {
 }
 
 export interface SanitySiteSettings {
+  // Contact
+  contactEmail: string | null;
+  careersEmail: string | null;
+  companyLocation: string | null;
+  footerTagline: string | null;
+  // Homepage
   heroSubtitle: string | null;
   ctaHeading1: string | null;
   ctaHeading2: string | null;
   ctaDescription: string | null;
+  stats: { value: string; label: string }[] | null;
+  processSteps: { title: string; description: string }[] | null;
+  hiringStripActive: boolean | null;
+  hiringStripText: string | null;
+  // Coverage
   coverageDescription: string | null;
   activeStates: string[] | null;
   pastStates: string[] | null;
+  // Announcements
+  announcementText: string | null;
+  announcementActive: boolean | null;
+  // Thank You
+  thankYouHeading: string | null;
+  thankYouMessage: string | null;
 }
 
 export interface SanityTestimonial {
@@ -62,6 +79,40 @@ export interface SanityService {
   capabilities: { label: string; value: string }[] | null;
   deliverables: string[] | null;
   order: number | null;
+}
+
+export interface SanityCaseStudy {
+  _id: string;
+  title: string;
+  slug: string;
+  state: string | null;
+  location: string | null;
+  completionDate: string | null;
+  totalFootage: number | null;
+  spliceCount: number | null;
+  duration: string | null;
+  clientType: string | null;
+  description: unknown[] | null; // Portable Text blocks
+  featuredImageUrl: string | null;
+  featuredImageLqip: string | null;
+}
+
+/** Lightweight case study data for the interactive coverage map */
+export interface MapProject {
+  title: string;
+  slug: string;
+  state: string;
+  location: string | null;
+  totalFootage: number | null;
+  spliceCount: number | null;
+}
+
+export interface SanityLibraryDocument {
+  _id: string;
+  title: string;
+  category: string;
+  fileUrl: string;
+  lastUpdated: string | null;
 }
 
 /* ─────────────────────────────────────────────
@@ -177,13 +228,25 @@ export async function getFAQItems(): Promise<SanityFAQItem[]> {
    ───────────────────────────────────────────── */
 
 const SITE_SETTINGS_QUERY = `*[_type == "siteSettings"][0] {
+  contactEmail,
+  careersEmail,
+  companyLocation,
+  footerTagline,
   heroSubtitle,
   ctaHeading1,
   ctaHeading2,
   ctaDescription,
+  stats,
+  processSteps,
+  hiringStripActive,
+  hiringStripText,
   coverageDescription,
   activeStates,
-  pastStates
+  pastStates,
+  announcementText,
+  announcementActive,
+  thankYouHeading,
+  thankYouMessage
 }`;
 
 export async function getSiteSettings(): Promise<SanitySiteSettings | null> {
@@ -269,5 +332,124 @@ export async function getServiceBySlug(slug: string): Promise<SanityService | nu
   } catch (err) {
     console.warn("[Sanity] Failed to fetch service by slug:", err);
     return null;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Case Studies
+   ───────────────────────────────────────────── */
+
+const CASE_STUDIES_QUERY = `*[_type == "caseStudy"] | order(completionDate desc) {
+  _id,
+  title,
+  "slug": slug.current,
+  state,
+  location,
+  completionDate,
+  totalFootage,
+  spliceCount,
+  duration,
+  clientType,
+  description,
+  "featuredImageUrl": featuredImage.asset->url,
+  "featuredImageLqip": featuredImage.asset->metadata.lqip
+}`;
+
+export async function getCaseStudies(): Promise<SanityCaseStudy[]> {
+  const client = getSanityClient();
+  if (!client) return [];
+  try {
+    return await client.fetch<SanityCaseStudy[]>(CASE_STUDIES_QUERY);
+  } catch (err) {
+    console.warn("[Sanity] Failed to fetch case studies:", err);
+    return [];
+  }
+}
+
+const CASE_STUDY_BY_SLUG_QUERY = `*[_type == "caseStudy" && slug.current == $slug][0] {
+  _id,
+  title,
+  "slug": slug.current,
+  state,
+  location,
+  completionDate,
+  totalFootage,
+  spliceCount,
+  duration,
+  clientType,
+  description,
+  "featuredImageUrl": featuredImage.asset->url,
+  "featuredImageLqip": featuredImage.asset->metadata.lqip
+}`;
+
+export async function getCaseStudyBySlug(slug: string): Promise<SanityCaseStudy | null> {
+  const client = getSanityClient();
+  if (!client) return null;
+  try {
+    return await client.fetch<SanityCaseStudy | null>(CASE_STUDY_BY_SLUG_QUERY, { slug });
+  } catch (err) {
+    console.warn("[Sanity] Failed to fetch case study by slug:", err);
+    return null;
+  }
+}
+
+const ALL_CASE_STUDY_SLUGS_QUERY = `*[_type == "caseStudy"] { "slug": slug.current }`;
+
+export async function getAllCaseStudySlugs(): Promise<string[]> {
+  const client = getSanityClient();
+  if (!client) return [];
+  try {
+    const results = await client.fetch<{ slug: string }[]>(ALL_CASE_STUDY_SLUGS_QUERY);
+    return results.map((r) => r.slug).filter(Boolean);
+  } catch (err) {
+    console.warn("[Sanity] Failed to fetch case study slugs:", err);
+    return [];
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Map Projects (lightweight for coverage map)
+   ───────────────────────────────────────────── */
+
+const MAP_PROJECTS_QUERY = `*[_type == "caseStudy" && defined(state)] | order(completionDate desc) {
+  title,
+  "slug": slug.current,
+  state,
+  location,
+  totalFootage,
+  spliceCount
+}`;
+
+export async function getMapProjects(): Promise<MapProject[]> {
+  const client = getSanityClient();
+  if (!client) return [];
+  try {
+    return await client.fetch<MapProject[]>(MAP_PROJECTS_QUERY);
+  } catch (err) {
+    console.warn("[Sanity] Failed to fetch map projects:", err);
+    return [];
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Document Library
+   ───────────────────────────────────────────── */
+
+const DOCUMENTS_QUERY = `*[_type == "libraryDocument"] | order(category asc, title asc) {
+  _id,
+  title,
+  category,
+  "fileUrl": file.asset->url,
+  lastUpdated
+}`;
+
+export async function getDocuments(): Promise<SanityLibraryDocument[]> {
+  const client = getSanityClient();
+  if (!client) return [];
+  try {
+    return await client.fetch<SanityLibraryDocument[]>(DOCUMENTS_QUERY);
+  } catch (err) {
+    console.warn("[Sanity] Failed to fetch documents:", err);
+    return [];
   }
 }

@@ -4,6 +4,8 @@ import { faqItem } from "./faqItem";
 import { siteSettings } from "./siteSettings";
 import { testimonial } from "./testimonial";
 import { service } from "./service";
+import { caseStudy } from "./caseStudy";
+import { libraryDocument } from "./libraryDocument";
 
 export const schemaTypes = [
   jobPosting,
@@ -12,4 +14,6 @@ export const schemaTypes = [
   siteSettings,
   testimonial,
   service,
+  caseStudy,
+  libraryDocument,
 ];

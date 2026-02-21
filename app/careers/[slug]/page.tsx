@@ -131,7 +131,7 @@ export default async function JobDetailPage({ params }: PageProps) {
               Fill out the application form and we&apos;ll be in touch if your experience matches what we need.
             </p>
             <Link
-              href={`/careers#apply?role=${slug}`}
+              href={`/careers?role=${slug}#apply`}
               className="inline-flex items-center gap-3 py-4 px-8 rounded-sm font-mono text-sm font-bold uppercase tracking-[0.15em] bg-blue-600 text-white hover:bg-blue-500 hover:shadow-[0_0_30px_rgba(37,99,235,0.2)] transition-all duration-300 interactable"
             >
               Apply for this Position

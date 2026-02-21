@@ -314,6 +314,7 @@ export function FieldGallery({ cmsImages }: FieldGalleryProps) {
       {/* Image grid */}
       <motion.div
         layout
+        data-cursor-gallery
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
       >
         <AnimatePresence mode="popLayout">

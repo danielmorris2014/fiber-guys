@@ -4,20 +4,25 @@ export const galleryImage = defineType({
   name: "galleryImage",
   title: "Gallery Image",
   type: "document",
+  description:
+    "Photos displayed on the Field Work (Gallery) page. Images are shown in a masonry grid and can be filtered by category. Upload high-quality photos — they will be optimized automatically.",
   fields: [
     defineField({
       name: "image",
-      title: "Image",
+      title: "Photo",
       type: "image",
       options: { hotspot: true },
       validation: (rule) => rule.required(),
+      description:
+        "Upload a high-resolution photo. Use the hotspot tool to set the focal point for cropping on different screen sizes.",
     }),
     defineField({
       name: "title",
       title: "Title",
       type: "string",
       validation: (rule) => rule.required(),
-      description: "e.g. 288ct Ribbon Splice — Atlanta, GA",
+      description:
+        'A short descriptive title shown on hover. Include the work type and location. Example: "288ct Ribbon Splice — Atlanta, GA".',
     }),
     defineField({
       name: "category",
@@ -34,12 +39,15 @@ export const galleryImage = defineType({
         ],
       },
       validation: (rule) => rule.required(),
+      description:
+        "Used for the filter tabs on the gallery page. Pick the category that best describes this photo.",
     }),
     defineField({
       name: "altText",
       title: "Alt Text",
       type: "string",
-      description: "Descriptive alt text for SEO and accessibility",
+      description:
+        "Describe what's in the photo for screen readers and SEO. Be specific — e.g. \"Technician operating a fiber jetting machine on a conduit run in rural Georgia\".",
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -47,19 +55,21 @@ export const galleryImage = defineType({
       title: "Description",
       type: "text",
       rows: 2,
-      description: "Short description for hover overlay",
+      description:
+        "Optional one-line description shown in the lightbox overlay when a visitor clicks on the photo.",
     }),
     defineField({
       name: "location",
       title: "Location",
       type: "string",
-      description: "e.g. Austin, TX",
+      description: 'Where this photo was taken. Format: "City, ST" (e.g. "Austin, TX").',
     }),
     defineField({
       name: "order",
       title: "Sort Order",
       type: "number",
-      description: "Lower numbers appear first",
+      description:
+        "Controls display order in the gallery. Lower numbers appear first. Leave blank to sort by upload date.",
     }),
   ],
   orderings: [

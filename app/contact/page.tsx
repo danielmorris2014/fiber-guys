@@ -2,7 +2,7 @@ import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { USCoverageMap } from "@/components/ui/USCoverageMap";
 import { Mail, MapPin } from "lucide-react";
-import { getSiteSettings } from "@/lib/sanity.queries";
+import { getSiteSettings, getMapProjects } from "@/lib/sanity.queries";
 import mapFallback from "@/content/map.json";
 import siteContentFallback from "@/content/site-content.json";
 import type { Metadata } from "next";
@@ -16,15 +16,25 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const siteSettings = await getSiteSettings();
+  const [siteSettings, mapProjects] = await Promise.all([
+    getSiteSettings(),
+    getMapProjects(),
+  ]);
 
-  const activeStates = siteSettings?.activeStates ?? mapFallback.activeStates;
-  const pastStates = siteSettings?.pastStates ?? mapFallback.pastStates;
+  // Only use JSON fallback when Sanity is not configured (siteSettings is null)
+  const activeStates = siteSettings
+    ? (siteSettings.activeStates ?? [])
+    : mapFallback.activeStates;
+  const pastStates = siteSettings
+    ? (siteSettings.pastStates ?? [])
+    : mapFallback.pastStates;
 
   const coverageDesc =
     siteSettings?.coverageDescription ||
     siteContentFallback.coverage?.description ||
     "Currently operating in Missouri, Georgia, Tennessee, Alabama, and Florida. Available for mobilization nationwide.";
+
+  const email = siteSettings?.contactEmail ?? "info@fiberguysllc.com";
 
   return (
     <main className="pt-20 lg:pt-24">
@@ -51,10 +61,10 @@ export default async function ContactPage() {
                 <div>
                   <h2 className="font-heading text-sm font-bold tracking-tight">Email</h2>
                   <a
-                    href="mailto:info@fiberguysllc.com"
+                    href={`mailto:${email}`}
                     className="text-muted hover:text-orange transition-colors text-sm mt-1 block"
                   >
-                    info@fiberguysllc.com
+                    {email}
                   </a>
                 </div>
               </div>
@@ -116,6 +126,7 @@ export default async function ContactPage() {
               <USCoverageMap
                 activeStates={activeStates}
                 pastStates={pastStates}
+                projects={mapProjects}
               />
             </div>
           </ScrollReveal>

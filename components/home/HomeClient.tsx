@@ -7,7 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { FAQItem } from '@/lib/types';
-import type { SanityTestimonial } from '@/lib/sanity.queries';
+import type { SanityTestimonial, MapProject } from '@/lib/sanity.queries';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { IndustryMarquee } from '@/components/home/IndustryMarquee';
@@ -173,6 +173,11 @@ export interface HomeClientProps {
   activeStates: string[] | null;
   pastStates: string[] | null;
   testimonials: SanityTestimonial[];
+  hiringStripActive: boolean;
+  hiringStripText: string | null;
+  mapProjects: MapProject[];
+  stats: { value: string; label: string }[] | null;
+  processSteps: { title: string; description: string }[] | null;
 }
 
 export default function HomeClient({
@@ -184,6 +189,11 @@ export default function HomeClient({
   activeStates,
   pastStates,
   testimonials,
+  hiringStripActive,
+  hiringStripText,
+  mapProjects,
+  stats,
+  processSteps,
 }: HomeClientProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const horizontalSectionRef = useRef<HTMLElement>(null);
@@ -417,12 +427,15 @@ export default function HomeClient({
         <section className="py-24 border-b border-white/10 bg-[#050505] relative z-10">
           <div className="container mx-auto px-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-              {[
-                { label: 'Fiber Counts', value: '12–864', unit: 'ct' },
-                { label: 'Daily Output', value: 'Up to 25K', unit: 'ft/day/crew' },
-                { label: 'Splice Target', value: '≤0.03', unit: 'dB' },
-                { label: 'Mobilization', value: '5–10', unit: 'days' },
-              ].map((stat, i) => (
+              {(stats && stats.length > 0
+                ? stats.map((s) => ({ label: s.label, value: s.value, unit: '' }))
+                : [
+                  { label: 'Fiber Counts', value: '12–864', unit: 'ct' },
+                  { label: 'Daily Output', value: 'Up to 25K', unit: 'ft/day/crew' },
+                  { label: 'Splice Target', value: '≤0.03', unit: 'dB' },
+                  { label: 'Mobilization', value: '5–10', unit: 'days' },
+                ]
+              ).map((stat, i) => (
                 <SpotlightCard key={i} className="border-l border-white/20 pl-6 group p-4 rounded-sm">
                   <p className="font-display text-3xl md:text-5xl font-bold text-white mb-1 group-hover:text-blue-600 transition-colors duration-300">
                     {stat.value}<span className="text-lg md:text-xl text-blue-600 ml-1">{stat.unit}</span>
@@ -481,14 +494,17 @@ export default function HomeClient({
                 <h2 className="font-display text-4xl uppercase font-bold text-white">The Protocol</h2>
                 <p className="font-mono text-sm mt-2 opacity-80 text-white">Methodology // Execution</p>
             </div>
-            <div className="process-track flex flex-row flex-nowrap h-full items-center" style={{ width: '500vw' }}>
-                {[
-                    { step: '01', title: 'Scope & Verify', desc: 'We review the project scope, verify conduit specs, and confirm we can deliver. Once everything checks out, we move to mobilization.' },
-                    { step: '02', title: 'Mobilize', desc: 'Equipment and experienced crews deployed to site. Compressor pressures calibrated to conduit specifications.' },
-                    { step: '03', title: 'Execute', desc: 'Production fiber placement or precision fusion splicing. Tension monitoring, bend radius compliance, and real-time quality checks.' },
-                    { step: '04', title: 'Document', desc: 'OTDR testing, splice loss verification, tray photography, and labeled enclosures. Every strand accounted for.' },
-                    { step: '05', title: 'Handoff', desc: 'Clean site, organized closures, and a documentation package ready for client review or closeout submission.' }
-                ].map((p, i) => (
+            <div className="process-track flex flex-row flex-nowrap h-full items-center" style={{ width: `${((processSteps && processSteps.length > 0 ? processSteps.length : 5) * 100)}vw` }}>
+                {(processSteps && processSteps.length > 0
+                    ? processSteps.map((s, i) => ({ step: String(i + 1).padStart(2, '0'), title: s.title, desc: s.description }))
+                    : [
+                        { step: '01', title: 'Scope & Verify', desc: 'We review the project scope, verify conduit specs, and confirm we can deliver. Once everything checks out, we move to mobilization.' },
+                        { step: '02', title: 'Mobilize', desc: 'Equipment and experienced crews deployed to site. Compressor pressures calibrated to conduit specifications.' },
+                        { step: '03', title: 'Execute', desc: 'Production fiber placement or precision fusion splicing. Tension monitoring, bend radius compliance, and real-time quality checks.' },
+                        { step: '04', title: 'Document', desc: 'OTDR testing, splice loss verification, tray photography, and labeled enclosures. Every strand accounted for.' },
+                        { step: '05', title: 'Handoff', desc: 'Clean site, organized closures, and a documentation package ready for client review or closeout submission.' }
+                    ]
+                ).map((p, i) => (
                     <div key={i} className="w-screen flex-shrink-0 px-12 flex flex-col justify-center h-full border-r border-white/20 last:border-r-0 text-white">
                         <span className="font-display text-[20vh] md:text-[30vh] opacity-20 font-bold mb-4 text-black leading-none">{p.step}</span>
                         <h3 className="font-display text-5xl md:text-7xl font-bold uppercase mb-6">{p.title}</h3>
@@ -524,6 +540,29 @@ export default function HomeClient({
           </div>
         </section>
 
+        {/* Hiring Strip (CMS-controlled) */}
+        {hiringStripActive && hiringStripText && (
+          <section className="border-t border-white/10 bg-[#050505]">
+            <div className="container mx-auto px-6">
+              <Link
+                href="/careers"
+                className="interactable flex items-center justify-between py-5 group"
+              >
+                <div className="flex items-center gap-4">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                  </span>
+                  <span className="font-mono text-xs uppercase tracking-[0.12em] text-white/50 group-hover:text-white transition-colors">
+                    {hiringStripText}
+                  </span>
+                </div>
+                <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              </Link>
+            </div>
+          </section>
+        )}
+
         {/* Coverage Map */}
         <section className="py-32 bg-[#050505] relative border-t border-white/10">
           <div className="container mx-auto px-6">
@@ -537,6 +576,7 @@ export default function HomeClient({
               <USCoverageMap
                 activeStates={activeStates ?? undefined}
                 pastStates={pastStates ?? undefined}
+                projects={mapProjects}
               />
             </div>
           </div>
@@ -552,27 +592,6 @@ export default function HomeClient({
             <div className="max-w-3xl">
               <FAQAccordion items={faqItems} />
             </div>
-          </div>
-        </section>
-
-        {/* Hiring Strip */}
-        <section className="border-t border-white/10 bg-[#050505]">
-          <div className="container mx-auto px-6">
-            <Link
-              href="/careers"
-              className="interactable flex items-center justify-between py-5 group"
-            >
-              <div className="flex items-center gap-4">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-                </span>
-                <span className="font-mono text-xs uppercase tracking-[0.12em] text-white/50 group-hover:text-white transition-colors">
-                  Now Hiring — Jetting Operators &amp; Precision Splicers
-                </span>
-              </div>
-              <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white group-hover:translate-x-1 transition-all" />
-            </Link>
           </div>
         </section>
 

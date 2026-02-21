@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Oswald, Inter, Space_Mono } from "next/font/google";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
@@ -9,6 +10,8 @@ import { LayoutTransition } from "@/components/layout/LayoutTransition";
 import { SignalLineTransition } from "@/components/layout/SignalLineTransition";
 import { Providers } from "@/components/providers/Providers";
 import { Preloader } from "@/components/ui/Preloader";
+import { AnnouncementBannerServer } from "@/components/layout/AnnouncementBannerServer";
+import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import "./globals.css";
 
 const oswald = Oswald({
@@ -188,8 +191,12 @@ export default function RootLayout({
           <Preloader />
           <GrainOverlay />
           <CustomCursor />
+          <ScrollToTop />
           <SignalLineTransition />
           <SmoothScroll>
+            <Suspense fallback={null}>
+              <AnnouncementBannerServer />
+            </Suspense>
             <Nav />
             <LayoutTransition>
               {children}

@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import { ApplicationForm } from "@/components/forms/ApplicationForm";
+import { ApplicationForm, type PositionOption } from "@/components/forms/ApplicationForm";
 import { JobAlertForm } from "@/components/forms/JobAlertForm";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { PositionCard, type SerializablePosition } from "@/components/careers/PositionCard";
-import { getActiveJobs } from "@/lib/sanity.queries";
+import { getActiveJobs, getSiteSettings } from "@/lib/sanity.queries";
 import type { Metadata } from "next";
 
 export const revalidate = 3600;
@@ -39,7 +39,12 @@ function titleToSlug(title: string): string {
 
 export default async function CareersPage() {
   /* Fetch from Sanity (returns [] if not configured) */
-  const sanityJobs = await getActiveJobs();
+  const [sanityJobs, siteSettings] = await Promise.all([
+    getActiveJobs(),
+    getSiteSettings(),
+  ]);
+
+  const careersEmail = siteSettings?.careersEmail ?? "careers@fiberguysllc.com";
 
   const POSITIONS: SerializablePosition[] = sanityJobs.map((job) => ({
     title: job.title,
@@ -55,6 +60,12 @@ export default async function CareersPage() {
   }));
 
   const hasPositions = POSITIONS.length > 0;
+
+  // Build dropdown options for the application form from Sanity jobs
+  const positionOptions: PositionOption[] = sanityJobs.map((job) => ({
+    value: job.slug || titleToSlug(job.title),
+    label: job.title,
+  }));
 
   return (
     <main className="pt-20 lg:pt-24">
@@ -170,7 +181,7 @@ export default async function CareersPage() {
 
               <div className="border border-white/[0.06] rounded-sm bg-white/[0.01] p-6 md:p-10">
                 <Suspense fallback={null}>
-                  <ApplicationForm />
+                  <ApplicationForm positions={positionOptions} />
                 </Suspense>
               </div>
             </ScrollReveal>
@@ -219,10 +230,10 @@ export default async function CareersPage() {
                     Questions?
                   </h3>
                   <a
-                    href="mailto:careers@fiberguysllc.com"
+                    href={`mailto:${careersEmail}`}
                     className="font-mono text-sm text-blue-400 hover:text-blue-300 transition-colors interactable"
                   >
-                    careers@fiberguysllc.com
+                    {careersEmail}
                   </a>
                 </div>
               </div>
