@@ -3,7 +3,7 @@ import { getDocuments } from "@/lib/sanity.queries";
 import { FileText, Download, Shield, Award, Receipt } from "lucide-react";
 import type { Metadata } from "next";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Documents",

@@ -7,7 +7,7 @@ import mapFallback from "@/content/map.json";
 import type { FAQItem } from "@/lib/types";
 import HomeClient from "@/components/home/HomeClient";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 export default async function Home() {
   const [sanityFaq, siteSettings, sanityTestimonials, mapProjects] = await Promise.all([

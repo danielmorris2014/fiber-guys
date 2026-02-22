@@ -7,7 +7,7 @@ import mapFallback from "@/content/map.json";
 import siteContentFallback from "@/content/site-content.json";
 import type { Metadata } from "next";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Contact",

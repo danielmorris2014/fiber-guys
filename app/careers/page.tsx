@@ -10,7 +10,7 @@ import type { SerializablePosition } from "@/components/careers/PositionCard";
 import { getActiveJobs, getSiteSettings } from "@/lib/sanity.queries";
 import type { Metadata } from "next";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Careers",

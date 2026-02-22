@@ -11,7 +11,7 @@ import Link from "next/link";
 import { ArrowLeft, MapPin, Calendar } from "lucide-react";
 import type { Metadata } from "next";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 interface PageProps {
   params: Promise<{ slug: string }>;

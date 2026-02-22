@@ -4,7 +4,7 @@ import { CheckCircle } from "lucide-react";
 import { getSiteSettings } from "@/lib/sanity.queries";
 import type { Metadata } from "next";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Thank You",

@@ -7,7 +7,7 @@ import { ArrowLeft, MapPin, Briefcase } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 interface PageProps {
   params: Promise<{ slug: string }>;

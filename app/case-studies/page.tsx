@@ -6,7 +6,7 @@ import Image from "next/image";
 import { MapPin, Calendar, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Case Studies",

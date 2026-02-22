@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getServiceBySlug } from "@/lib/sanity.queries";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Fiber Jetting",

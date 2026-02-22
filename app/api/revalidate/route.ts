@@ -10,9 +10,21 @@ import { NextRequest, NextResponse } from "next/server";
  *   Headers: x-revalidation-secret = <your REVALIDATION_SECRET env var>
  *
  * When content is published in Sanity, this instantly purges the
- * ISR cache for /gallery and /careers so changes appear without
- * waiting for the hourly revalidation window.
+ * ISR cache so changes appear without waiting for the revalidation window.
  */
+
+/** Map Sanity document types to the routes that depend on them */
+const TYPE_TO_PATHS: Record<string, string[]> = {
+  jobPosting: ["/careers"],
+  galleryImage: ["/gallery"],
+  siteSettings: ["/", "/careers", "/contact", "/about"],
+  testimonial: ["/"],
+  service: ["/services", "/services/jetting", "/services/splicing"],
+  caseStudy: ["/case-studies", "/about"],
+  faqItem: ["/careers"],
+  libraryDocument: ["/documents"],
+};
+
 export async function POST(request: NextRequest) {
   const secret = request.headers.get("x-revalidation-secret");
   const expectedSecret = process.env.REVALIDATION_SECRET;
@@ -29,10 +41,28 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    revalidatePath("/gallery");
-    revalidatePath("/careers");
+    // Try to read the Sanity webhook payload to revalidate only affected paths
+    let paths: string[] = [];
+    try {
+      const body = await request.json();
+      const docType = body?._type as string | undefined;
+      if (docType && TYPE_TO_PATHS[docType]) {
+        paths = TYPE_TO_PATHS[docType];
+      }
+    } catch {
+      // If body parsing fails, fall through to revalidate all
+    }
 
-    return NextResponse.json({ revalidated: true, now: Date.now() });
+    // Fallback: revalidate all content paths
+    if (paths.length === 0) {
+      paths = [...new Set(Object.values(TYPE_TO_PATHS).flat())];
+    }
+
+    for (const path of paths) {
+      revalidatePath(path);
+    }
+
+    return NextResponse.json({ revalidated: true, paths, now: Date.now() });
   } catch (err) {
     console.error("[Revalidate] Error:", err);
     return NextResponse.json(
